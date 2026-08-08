@@ -1,0 +1,58 @@
+[
+  {
+    "query_id": "Q01",
+    "question": "Quy định về việc cơ cấu lại thời hạn trả nợ cho khách hàng như thế nào?",
+    "relevant_chunk_ids": ["chk_adv_001"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q02",
+    "question": "Tổ chức tín dụng có được giữ nguyên nhóm nợ khi cơ cấu lại nợ không?",
+    "relevant_chunk_ids": ["chk_adv_002"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q03",
+    "question": "Quy định trích lập dự phòng rủi ro cho dư nợ khách hàng theo Điều 6 Khoản 3?",
+    "relevant_chunk_ids": ["chk_adv_003", "chk_adv_004"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q04",
+    "question": "Phân loại nợ và trích lập dự phòng được thực hiện như thế nào?",
+    "relevant_chunk_ids": ["chk_adv_004", "chk_adv_003"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q05",
+    "question": "Doanh nghiệp gặp chướng ngại tài chính có được đề nghị gia hạn nợ không?",
+    "relevant_chunk_ids": ["chk_adv_005"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q06",
+    "question": "Bên vay đối mặt bất lợi kinh tế có được giãn tiến độ thanh toán không?",
+    "relevant_chunk_ids": ["chk_adv_006"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q07",
+    "question": "Nghĩa vụ giám sát của chi nhánh Ngân hàng Nhà nước được quy định thế nào?",
+    "relevant_chunk_ids": ["chk_adv_007"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q08",
+    "question": "Thủ tục xin cấp phép xây dựng nhà ở đô thị ở đâu?",
+    "relevant_chunk_ids": ["chk_adv_008"],
+    "scope": "out_of_scope",
+    "needs_human_review": true
+  }
+]
