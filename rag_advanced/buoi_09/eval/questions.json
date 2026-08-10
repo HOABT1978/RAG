@@ -1,0 +1,119 @@
+[
+  {
+    "question_id": "Q01",
+    "question": "Quy định về việc cơ cấu lại thời hạn trả nợ cho khách hàng như thế nào?",
+    "question_type": "paraphrase",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0009"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Điều 4 Thông tư 02/2023/TT-NHNN quy định cơ cấu nợ."
+  },
+  {
+    "question_id": "Q02",
+    "question": "Tổ chức tín dụng có được giữ nguyên nhóm nợ khi cơ cấu lại nợ không?",
+    "question_type": "paraphrase",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0018"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Điều 5 Thông tư 02/2023/TT-NHNN về giữ nguyên nhóm nợ."
+  },
+  {
+    "question_id": "Q03",
+    "question": "Quy định trích lập dự phòng rủi ro cho dư nợ khách hàng theo Điều 6 Khoản 3?",
+    "question_type": "exact",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0022"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Điều 6 Thông tư 02/2023/TT-NHNN về trích lập dự phòng."
+  },
+  {
+    "question_id": "Q04",
+    "question": "Phân loại nợ và trích lập dự phòng được thực hiện như thế nào?",
+    "question_type": "multi_aspect",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0022", "TT_02_2023_NHNN:hierarchical:0023"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128", "42033fa917fd6b44411fe11e84bad4d1"],
+    "needs_human_review": true,
+    "notes": "Gồm cả phân loại nợ Điều 5 và trích lập dự phòng Điều 6."
+  },
+  {
+    "question_id": "Q05",
+    "question": "Doanh nghiệp gặp chướng ngại tài chính có được đề nghị gia hạn nợ không?",
+    "question_type": "paraphrase",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0009"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Gia hạn nợ là một hình thức cơ cấu lại nợ của Thông tư 02."
+  },
+  {
+    "question_id": "Q06",
+    "question": "Bên vay đối mặt bất lợi kinh tế có được giãn tiến độ thanh toán không?",
+    "question_type": "paraphrase",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0009"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Bất lợi kinh tế tương đương khó khăn sản xuất kinh doanh theo Thông tư 02."
+  },
+  {
+    "question_id": "Q07",
+    "question": "Nghĩa vụ giám sát của chi nhánh Ngân hàng Nhà nước được quy định thế nào?",
+    "question_type": "hierarchy_context",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0040"],
+    "relevant_parent_ids": ["e99e85720f34706ce36c58c3f3ff3c31"],
+    "needs_human_review": true,
+    "notes": "Trách nhiệm thanh tra, giám sát của Ngân hàng Nhà nước chi nhánh tỉnh."
+  },
+  {
+    "question_id": "Q08",
+    "question": "Thủ tục xin cấp phép xây dựng nhà ở đô thị ở đâu?",
+    "question_type": "out_of_scope",
+    "relevant_child_ids": [],
+    "relevant_parent_ids": [],
+    "needs_human_review": true,
+    "notes": "Nằm ngoài phạm vi của các thông tư ngân hàng."
+  },
+  {
+    "question_id": "Q_COMP_A",
+    "question": "Điều 8 quy định những nhu cầu vốn nào không được cho vay?",
+    "question_type": "exact",
+    "relevant_child_ids": ["TT_39_2016_NHNN:hierarchical:0050"],
+    "relevant_parent_ids": ["5d3af1bc691b56a486b1d20bd1b594ae"],
+    "needs_human_review": true,
+    "notes": "Điều 8 Thông tư 39/2016/TT-NHNN."
+  },
+  {
+    "question_id": "Q_COMP_B",
+    "question": "Khách hàng cần đáp ứng những yêu cầu gì để được tổ chức tín dụng xem xét cho vay?",
+    "question_type": "paraphrase",
+    "relevant_child_ids": ["TT_39_2016_NHNN:hierarchical:0045"],
+    "relevant_parent_ids": ["5d3af1bc691b56a486b1d20bd1b594ae"],
+    "needs_human_review": true,
+    "notes": "Điều 7 Thông tư 39/2016/TT-NHNN về điều kiện vay vốn."
+  },
+  {
+    "question_id": "Q_COMP_C",
+    "question": "Điều kiện vay vốn và những nhu cầu vốn không được cho vay được quy định như thế nào?",
+    "question_type": "multi_aspect",
+    "relevant_child_ids": ["TT_39_2016_NHNN:hierarchical:0045", "TT_39_2016_NHNN:hierarchical:0050"],
+    "relevant_parent_ids": ["5d3af1bc691b56a486b1d20bd1b594ae"],
+    "needs_human_review": true,
+    "notes": "Gồm cả Điều 7 (điều kiện vay) và Điều 8 (nhu cầu không được cho vay) của Thông tư 39."
+  },
+  {
+    "question_id": "Q_COMP_D",
+    "question": "Quy định về cơ cấu lại thời hạn trả nợ gồm điều kiện, thời gian và trách nhiệm nào?",
+    "question_type": "hierarchy_context",
+    "relevant_child_ids": ["TT_02_2023_NHNN:hierarchical:0009"],
+    "relevant_parent_ids": ["2222ca0c27c03966936318eb670c7128"],
+    "needs_human_review": true,
+    "notes": "Quy định chi tiết cơ cấu nợ tại Thông tư 02."
+  },
+  {
+    "question_id": "Q_COMP_E",
+    "question": "Lãi suất tiết kiệm cao nhất trên thị trường hôm nay là bao nhiêu?",
+    "question_type": "out_of_scope",
+    "relevant_child_ids": [],
+    "relevant_parent_ids": [],
+    "needs_human_review": true,
+    "notes": "Câu hỏi ngoài phạm vi nghiệp vụ cho vay và cơ cấu nợ."
+  }
+]

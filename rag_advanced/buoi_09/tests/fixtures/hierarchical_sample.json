@@ -1,0 +1,47 @@
+[
+  {
+    "chunk_id": "TT_02:hierarchical:0001",
+    "strategy": "hierarchical",
+    "source": "TT_02_2023_NHNN.pdf",
+    "page_start": 1,
+    "page_end": 1,
+    "text": "Thông tư số 02/2023/TT-NHNN ngày 23 tháng 4 năm 2023.",
+    "structure": null
+  },
+  {
+    "chunk_id": "TT_02:hierarchical:0002",
+    "strategy": "hierarchical",
+    "source": "TT_02_2023_NHNN.pdf",
+    "page_start": 1,
+    "page_end": 1,
+    "text": "Chương I QUY ĐỊNH CHUNG",
+    "structure": {
+      "chapter": "Chương I"
+    }
+  },
+  {
+    "chunk_id": "TT_02:hierarchical:0003",
+    "strategy": "hierarchical",
+    "source": "TT_02_2023_NHNN.pdf",
+    "page_start": 1,
+    "page_end": 1,
+    "text": "Điều 1. Phạm vi điều chỉnh\nThông tư này quy định về việc...",
+    "structure": {
+      "chapter": "Chương I",
+      "article": "Điều 1. Phạm vi điều chỉnh"
+    }
+  },
+  {
+    "chunk_id": "TT_02:hierarchical:0004",
+    "strategy": "hierarchical",
+    "source": "TT_02_2023_NHNN.pdf",
+    "page_start": 1,
+    "page_end": 1,
+    "text": "1. Tổ chức tín dụng quy định...",
+    "structure": {
+      "chapter": "Chương I",
+      "article": "Điều 1. Phạm vi điều chỉnh",
+      "clause": "1. Tổ chức tín dụng quy định..."
+    }
+  }
+]

@@ -1,0 +1,17 @@
+# Ignore environment variables
+.env
+hf_hoabt1978.txt
+
+# Ignore cache files
+__pycache__/
+*.py[cod]
+
+# Ignore reports and dynamic storage
+reports/
+storage/chroma/
+storage/hierarchy/
+storage/huggingface/
+!reports/.gitkeep
+!storage/chroma/.gitkeep
+!storage/hierarchy/.gitkeep
+!storage/huggingface/.gitkeep
