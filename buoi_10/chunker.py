@@ -42,7 +42,7 @@ def clean_html_text(soup_node):
         t = re.sub(r"\s+", " ", t)
         return t
 
-def parse_document(doc_id, html_content):
+def parse_document(doc_id, doc_title, html_content):
     """Phân tách tài liệu HTML thành các chunks phân cấp."""
     soup = BeautifulSoup(html_content, "html.parser")
     body = soup.body if soup.body else soup
@@ -172,6 +172,7 @@ def parse_document(doc_id, html_content):
         chunks.append({
             'chunk_id': chunk_id,
             'doc_id': doc_id,
+            'doc_title': doc_title,
             'type': chunk_type,
             'text': clean_text,
             'parent_id': parent_id,
@@ -194,12 +195,30 @@ def parse_document(doc_id, html_content):
 
 def main():
     content_csv = DATA_DIR / "content.csv"
+    metadata_csv = DATA_DIR / "metadata.csv"
+    
     if not content_csv.exists():
         print(f"❌ Không tìm thấy tệp {content_csv}")
         return
         
+    # Đọc siêu dữ liệu metadata.csv để lấy tên tiêu đề tương ứng của từng Document
+    doc_id_to_title = {}
+    if metadata_csv.exists():
+        print(f"📄 Đang đọc siêu dữ liệu tiêu đề từ {metadata_csv.name}...")
+        with open(metadata_csv, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                doc_id_to_title[row['id']] = row['title']
+    else:
+        print(f"⚠️ Không tìm thấy tệp {metadata_csv.name}. Sẽ sử dụng tiêu đề mặc định.")
+        
     all_chunks = []
     print("⏳ Đang phân tách cấu trúc HTML từ content.csv...")
+    
+    # Biến để lưu một mẫu so sánh HTML thô và văn bản sạch
+    raw_html_example = ""
+    clean_text_example = ""
+    example_extracted = False
     
     with open(content_csv, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
@@ -209,7 +228,23 @@ def main():
             doc_id = row[0]
             html_content = row[1]
             
-            doc_chunks = parse_document(doc_id, html_content)
+            doc_title = doc_id_to_title.get(doc_id, f"Tài liệu luật ID {doc_id}")
+            
+            # Trích xuất mẫu HTML thô để minh họa trực quan
+            if not example_extracted and html_content:
+                soup = BeautifulSoup(html_content, "html.parser")
+                sample_node = None
+                # Tìm một phần tử bất kỳ có chứa class hoặc là table để làm ví dụ
+                for child in soup.descendants:
+                    if child.name in ['p', 'table'] and child.get_text(strip=True):
+                        sample_node = child
+                        break
+                if sample_node:
+                    raw_html_example = str(sample_node)[:300] + "..." if len(str(sample_node)) > 300 else str(sample_node)
+                    clean_text_example = clean_html_text(sample_node)
+                    example_extracted = True
+            
+            doc_chunks = parse_document(doc_id, doc_title, html_content)
             all_chunks.extend(doc_chunks)
             
     # Lưu kết quả ra JSON
@@ -219,17 +254,43 @@ def main():
     print(f"✅ Đã phân tách xong! Tổng số chunks được tạo: {len(all_chunks)}")
     print(f"📁 Đã lưu danh sách chunks tại: {OUTPUT_PATH}")
     
-    # In kết quả phân tách mẫu cho 15 chunks đầu tiên của văn bản thứ nhất để minh họa trực quan
+    # In kết quả phân tách mẫu để minh họa trực quan cách thuật toán làm sạch và chia nhỏ HTML hoạt động
     print("\n================== MINH HỌA TRỰC QUAN KẾT QUẢ CHUNKING (MẪU) ==================")
+    
+    if raw_html_example:
+        print("\n--- 1. MINH HỌA HOẠT ĐỘNG LÀM SẠCH HTML ---")
+        print("👉 [NỘI DUNG HTML THÔ CỒNG KỀNH TRONG DỮ LIỆU]:")
+        print(f"   {raw_html_example}")
+        print("\n👉 [VĂN BẢN ĐÃ ĐƯỢC LÀM SẠCH (LOẠI BỎ CÁC TRƯỜNG/TAGS CỒNG KỀNH)]: ")
+        print(f"   {clean_text_example}")
+        print("-" * 80)
+        
+    print("\n--- 2. MINH HỌA CẤU TRÚC PHÂN CẤP CHA - CON & LIÊN KẾT NEXT ANH EM ---")
     sample_doc_id = all_chunks[0]['doc_id']
     sample_chunks = [c for c in all_chunks if c['doc_id'] == sample_doc_id][:20]
     
+    type_order = ['chapter', 'section', 'subsection', 'article', 'clause', 'item', 'content', 'table']
+    
     for c in sample_chunks:
-        indent = "  " * (['document', 'chapter', 'section', 'subsection', 'article', 'clause', 'item', 'content', 'table'].index(c['type']) if c['type'] in ['chapter', 'section', 'subsection', 'article', 'clause', 'item'] else 6)
+        try:
+            level = type_order.index(c['type'])
+        except ValueError:
+            level = 7
+            
+        indent = "  " * level
         next_sibling = c.get('next_sibling_id', 'None')
-        print(f"{indent}[{c['type'].upper()}] ID: {c['chunk_id']} | Parent: {c['parent_id']} | NEXT: {next_sibling}")
-        print(f"{indent}Text: {c['text'][:120]}...")
-        print("-" * 80)
+        
+        # Liên kết trực tiếp các phân đoạn con tới nút gốc Document sử dụng tiêu đề tương ứng
+        if c['parent_type'] == 'document':
+            parent_desc = f"Document Gốc (ID: {c['parent_id']}) ➔ Tiêu đề: \"{c['doc_title'][:60]}...\""
+        else:
+            parent_desc = f"Parent Chunk (ID: {c['parent_id']}, Loại: {c['parent_type'].upper()})"
+            
+        print(f"{indent}📍 [{c['type'].upper()}] ID: {c['chunk_id']}")
+        print(f"{indent}   ├── {parent_desc}")
+        print(f"{indent}   ├── NEXT Sibling: {next_sibling}")
+        print(f"{indent}   └── Nội dung sạch: {c['text'][:120]}...")
+        print(f"{indent}" + "-" * (85 - len(indent)))
 
 if __name__ == "__main__":
     main()

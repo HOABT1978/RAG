@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph RAG QA - Hệ Thống Hỏi Đáp Luật Pháp Đa Bước</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-glow: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --accent-glow: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            --purple-glow: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-gold: #fbbf24;
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(29, 78, 216, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* HEADER DESIGN */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        /* MAIN GRID LAYOUT */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CARD STYLE (GLASSMORPHISM) */
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .card-title i {
+            color: #3b82f6;
+        }
+
+        /* INPUT CONTROL STYLES */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .textarea-input {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .textarea-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* SLIDER STYLE */
+        .slider-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .slider-value {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+            transition: transform 0.1s;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--primary-glow);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* SUGGESTION PILLS */
+        .suggestions-title {
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .suggestion-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--text-muted);
+        }
+
+        .suggestion-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        .suggestion-item i {
+            margin-top: 3px;
+            color: #3b82f6;
+        }
+
+        /* RESULTS AREA */
+        .placeholder-text {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 80px 0;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .placeholder-text i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-spinner p {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .answer-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* TIMELINE/BADGES FOR RETRIEVED DOCUMENTS */
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .doc-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .doc-badge.direct {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .doc-badge.related {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .doc-badge:hover {
+            transform: scale(1.05);
+        }
+
+        /* LLM ANSWER CONTAINER */
+        .markdown-body {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+            color: #f3f4f6;
+            overflow-x: auto;
+        }
+
+        .markdown-body p {
+            margin-bottom: 15px;
+        }
+
+        .markdown-body h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 5px;
+        }
+
+        .markdown-body ul, .markdown-body ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .markdown-body li {
+            margin-bottom: 5px;
+        }
+
+        .markdown-body strong {
+            color: var(--text-gold);
+        }
+
+        /* CONTEXT ACCORDION */
+        .accordion-header {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+        }
+
+        .accordion-content {
+            display: none;
+            padding-top: 15px;
+        }
+
+        .context-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .context-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .context-meta .title {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .context-meta .type {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .context-text {
+            color: #d1d5db;
+            font-family: inherit;
+            white-space: pre-wrap;
+        }
+
+        .time-badge {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo-container">
+                <i class="fa-solid fa-diagram-project logo-icon"></i>
+                <h1>Graph RAG QA System</h1>
+            </div>
+            <p>Hỏi đáp & Tra cứu văn bản Luật chuyên sâu qua Đồ thị Đa bước</p>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-grid">
+            <!-- PANEL CẤU HÌNH & NHẬP LIỆU -->
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-circle-info"></i> Nhập câu hỏi & Cấu hình
+                </h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="query-input">Đặt câu hỏi pháp lý của bạn:</label>
+                    <textarea class="textarea-input" id="query-input" placeholder="Ví dụ: Quy định về hồ sơ, thủ tục cấp giấy phép lần đầu của ngân hàng thương mại..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chọn số bước nhảy trên đồ thị (N-hops):</label>
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span>Độ sâu kết nối (N-hops):</span>
+                            <span class="slider-value" id="hops-value">1</span>
+                        </div>
+                        <input type="range" class="range-slider" id="hops-slider" min="0" max="2" value="1">
+                    </div>
+                </div>
+
+                <button class="btn" id="submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi truy vấn RAG
+                </button>
+
+                <h4 class="suggestions-title"><i class="fa-solid fa-lightbulb"></i> Câu hỏi kiểm thử gợi ý:</h4>
+                <div id="suggestions-list">
+                    <div class="suggestion-item" data-query="Nghị định 46/2023/NĐ-CP thay thế cho nghị định nào, và nghị định bị thay thế đó có nội dung gì nổi bật về kinh doanh bảo hiểm?">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Nghị định 46/2023/NĐ-CP thay thế nghị định nào và nội dung nổi bật?</span>
+                    </div>
+                    <div class="suggestion-item" data-query="Văn bản hợp nhất số 52/VBHN-NHNN được hợp nhất từ văn bản nào, và quy định về hồ sơ, thủ tục cấp giấy phép lần đầu của ngân hàng thương mại gồm những tài liệu gì?">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Hợp nhất 52/VBHN-NHNN từ văn bản nào và hồ sơ cấp phép NH thương mại?</span>
+                    </div>
+                    <div class="suggestion-item" data-query="Thông tư số 01/2025/TT-NHNN quy định về cấp giấy phép quỹ tín dụng nhân dân được sửa đổi, bổ sung bởi văn bản nào, và những nội dung sửa đổi bổ sung chính là gì?">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Thông tư 01/2025/TT-NHNN được sửa đổi bởi văn bản nào và nội dung sửa đổi?</span>
+                    </div>
+                    <div class="suggestion-item" data-query="Thông tư số 41/2016/TT-NHNN về tỷ lệ an toàn vốn của ngân hàng căn cứ vào luật nào, và luật đó quy định chức năng nhiệm vụ của cơ quan nào?">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Thông tư 41/2016/TT-NHNN căn cứ vào luật nào và quy định cơ quan nào?</span>
+                    </div>
+                    <div class="suggestion-item" data-query="Hoạt động giao nhận, vận chuyển tiền mặt và tài sản quý của Ngân hàng Nhà nước được điều chỉnh bởi Thông tư nào, và Thông tư đó có được sửa đổi bổ sung bởi văn bản nào không?">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Giao nhận vận chuyển tiền mặt của NHNN được điều chỉnh bởi Thông tư nào?</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL HIỂN THỊ KẾT QUẢ -->
+            <div class="card">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-square-poll-horizontal"></i> Kết quả tìm kiếm & Giải đáp
+                </h3>
+
+                <!-- Trạng thái chờ -->
+                <div class="placeholder-text" id="placeholder">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Chưa có truy vấn nào được thực hiện.<br>Vui lòng nhập câu hỏi hoặc chọn câu hỏi gợi ý để bắt đầu.</span>
+                </div>
+
+                <!-- Trạng thái Loading -->
+                <div class="loading-spinner" id="loading">
+                    <div class="spinner"></div>
+                    <p>Hệ thống đang chạy tìm kiếm vector, duyệt đồ thị Neo4j và tổng hợp câu trả lời từ Gemini...</p>
+                </div>
+
+                <!-- Trạng thái Kết quả -->
+                <div class="answer-content" id="results">
+                    <div class="time-badge">
+                        <i class="fa-solid fa-clock"></i> Thời gian xử lý: <span id="time-taken">0</span>s
+                    </div>
+
+                    <h4 class="form-label"><i class="fa-solid fa-diagram-next"></i> Sơ đồ tài liệu đã duyệt qua Đồ thị:</h4>
+                    <div class="badge-list" id="badges-container">
+                        <!-- badges generated here -->
+                    </div>
+
+                    <h4 class="form-label"><i class="fa-solid fa-robot"></i> Trả lời từ Gemini (gemini-flash-latest):</h4>
+                    <div class="markdown-body" id="llm-answer">
+                        <!-- answer generated here -->
+                    </div>
+
+                    <!-- Accordion ngữ cảnh -->
+                    <div class="accordion">
+                        <div class="accordion-header" id="accordion-toggle">
+                            <span><i class="fa-solid fa-list-check"></i> Trích dẫn ngữ cảnh pháp lý chi tiết (<span id="chunks-count">0</span>)</span>
+                            <i class="fa-solid fa-chevron-down" id="accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content" id="accordion-body">
+                            <!-- Chunks context details here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT ĐIỀU HƯỚNG TƯƠNG TÁC -->
+    <script>
+        const hopsSlider = document.getElementById('hops-slider');
+        const hopsValue = document.getElementById('hops-value');
+        const queryInput = document.getElementById('query-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const placeholder = document.getElementById('placeholder');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const timeTaken = document.getElementById('time-taken');
+        const badgesContainer = document.getElementById('badges-container');
+        const llmAnswer = document.getElementById('llm-answer');
+        const chunksCount = document.getElementById('chunks-count');
+        const accordionBody = document.getElementById('accordion-body');
+        const accordionToggle = document.getElementById('accordion-toggle');
+        const accordionIcon = document.getElementById('accordion-icon');
+
+        // Đồng bộ slider
+        hopsSlider.addEventListener('input', () => {
+            hopsValue.textContent = hopsSlider.value;
+        });
+
+        // Click gợi ý
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', () => {
+                queryInput.value = item.getAttribute('data-query');
+                submitQuery();
+            });
+        });
+
+        // Click gửi câu hỏi
+        submitBtn.addEventListener('click', submitQuery);
+
+        // Click đóng/mở accordion ngữ cảnh
+        let accordionOpen = false;
+        accordionToggle.addEventListener('click', () => {
+            accordionOpen = !accordionOpen;
+            if (accordionOpen) {
+                accordionBody.style.display = 'block';
+                accordionIcon.className = 'fa-solid fa-chevron-up';
+            } else {
+                accordionBody.style.display = 'none';
+                accordionIcon.className = 'fa-solid fa-chevron-down';
+            }
+        });
+
+        async function submitQuery() {
+            const query = queryInput.value.trim();
+            if (!query) {
+                alert('Vui lòng nhập câu hỏi pháp lý!');
+                return;
+            }
+
+            const n_hops = parseInt(hopsSlider.value);
+
+            // Cập nhật trạng thái hiển thị
+            placeholder.style.display = 'none';
+            results.style.display = 'none';
+            loading.style.display = 'block';
+
+            // Tự động sử dụng địa chỉ tuyệt đối nếu trang được mở trực tiếp dạng tệp (giao thức file://)
+            let apiEndpoint = '/api/query';
+            if (window.location.protocol === 'file:') {
+                apiEndpoint = 'http://127.0.0.1:5000/api/query';
+            }
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        n_hops: n_hops,
+                        k: 8,
+                        m_best: 10
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Lỗi: ' + data.error);
+                    placeholder.style.display = 'block';
+                    loading.style.display = 'none';
+                    return;
+                }
+
+                // Render kết quả
+                timeTaken.textContent = data.time_taken_seconds;
+                
+                // Vẽ badges tài liệu duyệt qua
+                badgesContainer.innerHTML = '';
+                if (data.retrieved_docs && data.retrieved_docs.length > 0) {
+                    data.retrieved_docs.forEach(doc => {
+                        const badge = document.createElement('span');
+                        badge.className = `doc-badge ${doc.is_direct ? 'direct' : 'related'}`;
+                        badge.innerHTML = `
+                            <i class="fa-solid ${doc.is_direct ? 'fa-square-check' : 'fa-circle-nodes'}"></i>
+                            ID: ${doc.id} - ${doc.title.substring(0, 45)}...
+                        `;
+                        badgesContainer.appendChild(badge);
+                    });
+                } else {
+                    badgesContainer.innerHTML = '<span class="text-muted">Không tìm thấy tài liệu liên quan nào</span>';
+                }
+
+                // Render Markdown câu trả lời
+                llmAnswer.innerHTML = marked.parse(data.answer);
+
+                // Render trích dẫn ngữ cảnh chi tiết
+                chunksCount.textContent = data.context_chunks ? data.context_chunks.length : 0;
+                accordionBody.innerHTML = '';
+                if (data.context_chunks && data.context_chunks.length > 0) {
+                    data.context_chunks.forEach((chunk, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'context-item';
+                        item.innerHTML = `
+                            <div class="context-meta">
+                                <span class="title">[${index+1}] ${chunk.doc_title} (ID: ${chunk.doc_id})</span>
+                                <span class="type">${chunk.type.toUpperCase()}</span>
+                            </div>
+                            <div class="context-text">${chunk.text}</div>
+                        `;
+                        accordionBody.appendChild(item);
+                    });
+                } else {
+                    accordionBody.innerHTML = '<p class="text-muted" style="padding: 15px;">Không có đoạn trích ngữ cảnh cụ thể nào được dùng.</p>';
+                }
+
+                // Chuyển sang kết quả
+                loading.style.display = 'none';
+                results.style.display = 'block';
+
+            } catch (err) {
+                alert('Có lỗi xảy ra khi kết nối tới máy chủ API: ' + err.message);
+                placeholder.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

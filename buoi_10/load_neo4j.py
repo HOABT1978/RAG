@@ -14,6 +14,10 @@ from pathlib import Path
 import torch
 from transformers import AutoTokenizer, AutoModel
 from neo4j import GraphDatabase
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -196,7 +200,8 @@ def main():
     MERGE (c:Chunk {chunk_id: chunk.chunk_id})
     SET c.text = chunk.text,
         c.type = chunk.type,
-        c.embedding = chunk.embedding
+        c.embedding = chunk.embedding,
+        c.document_title = chunk.doc_title
     """
     with driver.session(database=db_name) as session:
         run_cypher_in_batches(session, chunk_query, chunks_with_emb)
@@ -208,7 +213,8 @@ def main():
     UNWIND $batch AS chunk
     MATCH (c:Chunk {chunk_id: chunk.chunk_id})
     MATCH (d:Document {id: chunk.doc_id})
-    MERGE (c)-[:PART_OF]->(d)
+    MERGE (c)-[r:PART_OF]->(d)
+    SET r.document_title = chunk.doc_title
     """
     with driver.session(database=db_name) as session:
         run_cypher_in_batches(session, part_of_query, chunks_with_emb)

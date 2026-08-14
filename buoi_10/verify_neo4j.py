@@ -3,7 +3,10 @@ Verification - Buổi 10
 Kiểm tra số lượng các thực thể và quan hệ đã được nạp vào cơ sở dữ liệu Neo4j.
 """
 
+import sys
 from neo4j import GraphDatabase
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 NEO4J_URI = "neo4j://127.0.0.1:7687"
 NEO4J_USER = "neo4j"
