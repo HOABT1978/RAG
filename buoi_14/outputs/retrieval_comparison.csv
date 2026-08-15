@@ -1,0 +1,7 @@
+question_id,question,expected_chunk_id,query_type,BM25-only_rank,BM25-only_mrr,Dense-only_rank,Dense-only_mrr,Hybrid_rank,Hybrid_mrr,Hybrid+Rerank_rank,Hybrid+Rerank_mrr
+q1,Nghị định 46/2023/NĐ-CP thay thế cho Nghị định nào,chk_163441_1401,EXACT_KEYWORD,-1,0.0,-1,0.0,-1,0.0,-1,0.0
+q2,Đóng gói niêm phong ngoại tệ giấy tờ có giá thực hiện như thế nào,chk_44209_0045,EXACT_KEYWORD,1,1.0,1,1.0,1,1.0,1,1.0
+q3,quy định về an toàn trong vận chuyển tiền mặt và tài sản quý của ngân hàng,chk_44209_0278,SEMANTIC,1,1.0,3,0.3333333333333333,1,1.0,2,0.5
+q4,Đại lý bán bảo hiểm theo Nghị định 67/2014/NĐ-CP phải đáp ứng điều kiện gì,chk_112025_0844,SEMANTIC,1,1.0,1,1.0,1,1.0,1,1.0
+q5,tiêu chuẩn thành viên Hội đồng quản trị doanh nghiệp bảo hiểm theo Nghị định 73/2016,chk_112025_0121,MIXED,-1,0.0,-1,0.0,-1,0.0,-1,0.0
+q6,Thông tư 01/2014 quy định thế nào về việc đóng gói niêm phong tiền mặt,chk_44209_0022,MIXED,2,0.5,1,1.0,1,1.0,1,1.0
