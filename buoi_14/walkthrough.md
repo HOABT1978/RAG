@@ -59,10 +59,12 @@ Hệ thống RAG đã được nâng cấp toàn diện bằng cách xây dựng
 
 ## 4. Demo Giao diện Web Streamlit
 *   **Giao diện Web**: [app.py](file:///d:/Rag_thuchanh/RAG/buoi_14/app.py) xây dựng bảng điều khiển trực quan cho hệ thống RAG Hybrid Search.
+*   **Tệp kích hoạt nhanh**: [run_app.bat](file:///d:/Rag_thuchanh/RAG/buoi_14/run_app.bat) cho phép bạn kích hoạt trực tiếp giao diện Web chỉ bằng một lần nhấp đúp chuột.
 *   **Chạy Web App**:
     ```bash
     streamlit run buoi_14/app.py
     ```
+    hoặc chạy trực tiếp tệp `buoi_14/run_app.bat`.
 *   **Đoạn phim kiểm thử giao diện**:
     ![Kiểm thử Giao diện RAG Hybrid Search Buổi 14](C:/Users/TranVanMinhHoa/.gemini/antigravity-ide/brain/1989ce0e-b62b-4ad5-be60-76d6f7925820/streamlit_fixed_demo_1786787151346.webp)
 

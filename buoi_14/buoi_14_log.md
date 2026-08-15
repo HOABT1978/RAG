@@ -57,3 +57,4 @@
     ```bash
     streamlit run buoi_14/app.py
     ```
+    hoặc nhấp đúp chạy trực tiếp tệp [`buoi_14/run_app.bat`](file:///d:/Rag_thuchanh/RAG/buoi_14/run_app.bat).
