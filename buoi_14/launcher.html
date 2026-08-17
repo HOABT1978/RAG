@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Hybrid Search Launcher - Buổi 14</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #08090d;
+            --card-bg: rgba(17, 20, 30, 0.7);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --primary: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f43f5e;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated glowing background blobs */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+            top: -150px;
+            left: -150px;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            bottom: -150px;
+            right: -150px;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-gradient {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .pipeline-badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .pipeline-step {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .pipeline-arrow {
+            color: var(--text-muted);
+            align-self: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Glassmorphism main card */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--primary), var(--secondary));
+        }
+
+        .btn-launch {
+            display: inline-block;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 16px 40px;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(124, 58, 237, 0.35);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .status-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            text-align: left;
+        }
+
+        .section-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .commands-list {
+            list-style: none;
+        }
+
+        .commands-list li {
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .command-tag {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: rgba(255, 255, 255, 0.07);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: var(--secondary);
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .features-list li strong {
+            color: var(--text-color);
+        }
+
+        .bullet-icon {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+            .logo-gradient {
+                font-size: 2.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="logo-gradient">RAG Hybrid Search & Reranking</h1>
+        <p class="subtitle">Hệ thống Tìm kiếm Pháp lý & Đồ thị Tri thức - Buổi 14</p>
+        
+        <div class="pipeline-badge-container">
+            <span class="pipeline-step">Chuẩn hóa dữ liệu</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">BM25 (Từ khóa)</span>
+            <span class="pipeline-arrow">&</span>
+            <span class="pipeline-step">Dense (Ngữ nghĩa)</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">Reciprocal Rank Fusion</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">BGE Reranking</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">Neo4j Graph Hints</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <a href="http://127.0.0.1:8502" target="_blank" class="btn-launch">
+            🚀 MỞ DASHBOARD WEB (127.0.0.1:8502)
+        </a>
+        <div class="status-text">
+            <span class="status-dot"></span> Máy chủ Streamlit đang chạy song song trên cổng 8502
+        </div>
+    </div>
+
+    <div class="sections-grid">
+        <div class="section-card">
+            <h3>⚡ Lệnh CLI Chạy Hệ Thống</h3>
+            <ul class="commands-list">
+                <li>
+                    • Khảo sát & Đánh giá an toàn dữ liệu nguồn:<br>
+                    <span class="command-tag">python buoi_14/scripts/inspect_project.py</span>
+                </li>
+                <li>
+                    • Chuẩn hóa văn bản và xây dựng quan hệ phân cấp:<br>
+                    <span class="command-tag">python buoi_14/scripts/prepare_corpus.py</span>
+                </li>
+                <li>
+                    • Chạy thử nghiệm và so sánh các mô hình tìm kiếm độc lập:<br>
+                    <span class="command-tag">python buoi_14/scripts/baseline_retrieval.py</span>
+                </li>
+                <li>
+                    • Khởi chạy thủ công giao diện Streamlit (cổng 8502):<br>
+                    <span class="command-tag">streamlit run buoi_14/app.py --server.port 8502</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h3>🎯 Tính Năng Thử Nghiệm Nổi Bật</h3>
+            <ul class="features-list">
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Hybrid Search (RRF):</strong> Tích hợp cả tìm kiếm từ khóa chính xác (BM25) và tìm kiếm vector ngữ nghĩa dựa trên nhúng (Embedding/Dense).</div>
+                </li>
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Reranking Cấp Cao:</strong> Sử dụng mô hình Cross-Encoder <code>bge-reranker-v2-m3</code> để tái xếp hạng chính xác, tối ưu hóa điểm số và hiển thị so sánh trước/sau khi Rerank.</div>
+                </li>
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Gợi Ý Mối Quan Hệ Đồ Thị (Neo4j):</strong> Hiển thị trực tiếp các quan hệ liên kết đồ thị (quan hệ chứa đựng <code>CONTAINS</code>, liền kề <code>NEXT</code> và quan hệ liên văn bản <code>VanBan</code>) ngay bên cạnh kết quả truy vấn.</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

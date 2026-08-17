@@ -1,0 +1,7 @@
+question_id,question,expected_chunk_id,query_type,note
+q1,Nghị định 46/2023/NĐ-CP thay thế cho Nghị định nào,chk_163441_1401,EXACT_KEYWORD,Nghị định 46/2023 thay thế cho Nghị định 73/2016
+q2,Đóng gói niêm phong ngoại tệ giấy tờ có giá thực hiện như thế nào,chk_44209_0045,EXACT_KEYWORD,Điều 6 Thông tư 01/2014 quy định đóng gói niêm phong ngoại tệ giống tiền mặt
+q3,quy định về an toàn trong vận chuyển tiền mặt và tài sản quý của ngân hàng,chk_44209_0278,SEMANTIC,Điều 52 quy định về đảm bảo an toàn trên đường vận chuyển tiền mặt
+q4,Đại lý bán bảo hiểm theo Nghị định 67/2014/NĐ-CP phải đáp ứng điều kiện gì,chk_112025_0844,SEMANTIC,Điều 86.4 quy định điều kiện của đại lý bán bảo hiểm
+q5,tiêu chuẩn thành viên Hội đồng quản trị doanh nghiệp bảo hiểm theo Nghị định 73/2016,chk_112025_0121,MIXED,Điều khoản quy định về Hội đồng quản trị trong doanh nghiệp bảo hiểm
+q6,Thông tư 01/2014 quy định thế nào về việc đóng gói niêm phong tiền mặt,chk_44209_0022,MIXED,Mục 1 của Chương II quy định đóng gói niêm phong tiền mặt

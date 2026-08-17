@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Hybrid Search Launcher - Buổi 14</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #08090d;
+            --card-bg: rgba(17, 20, 30, 0.7);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --primary: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f43f5e;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated glowing background blobs */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+            top: -150px;
+            left: -150px;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            bottom: -150px;
+            right: -150px;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-gradient {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .pipeline-badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .pipeline-step {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .pipeline-arrow {
+            color: var(--text-muted);
+            align-self: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Glassmorphism main card */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(16px);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--primary), var(--secondary));
+        }
+
+        .btn-launch {
+            display: inline-block;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 16px 40px;
+            border-radius: 30px;
+            box-shadow: 0 5px 20px rgba(124, 58, 237, 0.35);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .status-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            text-align: left;
+        }
+
+        .section-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .commands-list {
+            list-style: none;
+        }
+
+        .commands-list li {
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .command-tag {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: rgba(255, 255, 255, 0.07);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: var(--secondary);
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .features-list li strong {
+            color: var(--text-color);
+        }
+
+        .bullet-icon {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+            .logo-gradient {
+                font-size: 2.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 class="logo-gradient">RAG Hybrid Search & Reranking</h1>
+        <p class="subtitle">Hệ thống Tìm kiếm Pháp lý & Đồ thị Tri thức - Buổi 15 (Secure RAG)</p>
+        
+        <div class="pipeline-badge-container">
+            <span class="pipeline-step">Security Tagging</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">BM25 (Pre-filtered)</span>
+            <span class="pipeline-arrow">&</span>
+            <span class="pipeline-step">Dense (Pre-filtered)</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">Reciprocal Rank Fusion</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">BGE Reranking</span>
+            <span class="pipeline-arrow">→</span>
+            <span class="pipeline-step">Secured Graph Hints (Neo4j)</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+            <a href="http://127.0.0.1:8502" target="_blank" class="btn-launch" style="margin-bottom: 0;">
+                🚀 MỞ DASHBOARD BUỔI 14 (127.0.0.1:8502)
+            </a>
+            <a href="http://127.0.0.1:8503" target="_blank" class="btn-launch" style="margin-bottom: 0; background: linear-gradient(135deg, var(--accent), var(--primary)); box-shadow: 0 5px 20px rgba(244, 63, 94, 0.35);">
+                🛡️ MỞ SECURE RAG BUỔI 15 (127.0.0.1:8503)
+            </a>
+        </div>
+        <div class="status-text">
+            <span class="status-dot"></span> Các máy chủ Streamlit chạy lần lượt trên cổng 8502 (Buổi 14) và 8503 (Buổi 15)
+        </div>
+    </div>
+
+    <div class="sections-grid">
+        <div class="section-card">
+            <h3>⚡ Lệnh CLI Chạy Hệ Thống</h3>
+            <ul class="commands-list">
+                <li>
+                    • Gán thẻ phân quyền bảo mật (Security Tagging):<br>
+                    <span class="command-tag">python buoi_15/scripts/assign_security_tags.py</span>
+                </li>
+                <li>
+                    • Cập nhật thông tin phân quyền bảo mật vào đồ thị Neo4j:<br>
+                    <span class="command-tag">python buoi_15/scripts/load_secure_kg.py</span>
+                </li>
+                <li>
+                    • Khởi chạy thủ công giao diện RAG Phân Quyền (cổng 8503):<br>
+                    <span class="command-tag">streamlit run buoi_15/app_secure.py --server.port 8503 --server.address 127.0.0.1</span>
+                </li>
+                <li>
+                    • Chạy kiểm thử rò rỉ dữ liệu tự động (Security Audit):<br>
+                    <span class="command-tag">python buoi_15/scripts/security_audit.py</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h3>🎯 Tính Năng Bảo Mật Nổi Bật</h3>
+            <ul class="features-list">
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Kiểm soát Truy cập ở mức Dữ liệu (RBAC):</strong> Phân loại tài liệu thành 3 nhóm quyền <code>Admin</code>, <code>HR</code>, <code>Risk_Manager</code>, <code>Staff</code>, <code>Guest</code> và lọc trước (Pre-filtering) dữ liệu trước khi chạy các thuật toán BM25/Dense Search.</div>
+                </li>
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Bảo mật Reranker & Citations:</strong> Tuyệt đối ngăn chặn tài liệu cấm lọt vào mô hình Cross-Encoder Reranker, hiển thị cảnh báo số kết quả bị ẩn và đảm bảo an toàn trích dẫn.</div>
+                </li>
+                <li>
+                    <span class="bullet-icon">✓</span>
+                    <div><strong>Mô phỏng Phân quyền (Impersonation):</strong> Giao diện tích hợp bộ chọn Vai trò (Your Roles) để học viên đóng vai kiểm thử trực quan các cấp quyền xem tài liệu khác nhau.</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
