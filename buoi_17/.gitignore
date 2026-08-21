@@ -1,3 +1,4 @@
+Rag_thuchanh/
 desktop-tutorial/
 RAG/
 .env
@@ -9,3 +10,5 @@ __pycache__/
 *.png
 *.json
 .vscode/
+*.key
+
