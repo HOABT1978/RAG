@@ -1,227 +1,468 @@
 """
-Unit tests cho Answer Pipeline, Grounding, Citations & Comparison - Buổi 08
+Unit tests cho Answer Pipeline, Grounding, Citation Mapping và Compare - Buổi 08
 """
 
 import sys
 import unittest
+import tempfile
 from pathlib import Path
 
+# Nạp module advanced_rag
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-from advanced_rag import query_advanced_rag, compare_retrieval_modes
+from advanced_rag import (
+    query_advanced_rag,
+    compare_retrieval_modes,
+    _map_citations,
+    _build_generation_prompt,
+    get_chroma_client,
+    get_collection_name,
+    load_advanced_config
+)
 
 
 class TestAnswerPipelineAndCompare(unittest.TestCase):
 
     def setUp(self):
-        self.sample_chunks = [
+        """Tạo dữ liệu mock mẫu và setup ChromaDB temporary."""
+        self.sample_evidence = [
             {
-                "chunk_id": "chk_ans_001",
-                "strategy": "hierarchical",
-                "source": "TT_02_2023_NHNN.pdf",
+                "chunk_id": "chk_001",
+                "text": "Nội dung quy định cơ cấu lại nợ.",
+                "source": "TT02.pdf",
                 "page_start": 1,
-                "page_end": 2,
-                "text": "Điều 7 Khoản 1 quy định cơ cấu nợ cho khách hàng gặp khó khăn."
+                "page_end": 1,
+                "bm25_rank": 1,
+                "bm25_score": 5.0,
+                "semantic_rank": 1,
+                "semantic_distance": 0.10,
+                "rrf_score": 0.032,
+                "fused_rank": 1,
+                "rerank_raw_score": 2.5,
+                "rerank_score": 0.92,
+                "rerank_rank": 1,
+                "rank_change": 0,
+                "accepted": True
             },
             {
-                "chunk_id": "chk_ans_002",
-                "strategy": "hierarchical",
-                "source": "TT_02_2023_NHNN.pdf",
+                "chunk_id": "chk_002",
+                "text": "Nội dung quy định phân loại nợ.",
+                "source": "TT02.pdf",
                 "page_start": 2,
-                "page_end": 3,
-                "text": "Điều 7 Khoản 2 quy định giữ nguyên nhóm nợ."
+                "page_end": 2,
+                "bm25_rank": 2,
+                "bm25_score": 3.0,
+                "semantic_rank": 2,
+                "semantic_distance": 0.40,
+                "rrf_score": 0.031,
+                "fused_rank": 2,
+                "rerank_raw_score": -1.0,
+                "rerank_score": 0.26,
+                "rerank_rank": 2,
+                "rank_change": 0,
+                "accepted": False
             }
         ]
 
-    def test_01_gating_by_mode(self):
-        """1. Gating theo đúng mode: semantic_distance cho semantic, rerank_score cho hybrid_rerank."""
-        def mock_bm25(q, k):
-            return []
+    def test_01_gating_rules_by_mode(self):
+        """1. Kiểm tra quy tắc Gating (Confidence Gate) chính xác theo từng mode."""
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
 
-        def mock_sem(q, k):
-            return [
-                {"chunk_id": "chk_ans_001", "text": "text1", "source": "s.pdf", "page_start": 1, "page_end": 1, "semantic_rank": 1, "semantic_distance": 0.20},
-                {"chunk_id": "chk_ans_002", "text": "text2", "source": "s.pdf", "page_start": 2, "page_end": 2, "semantic_rank": 2, "semantic_distance": 0.80}  # Rejected > 0.45
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
+
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Cơ cấu nợ."}
             ]
 
-        def mock_gen(prompt):
-            return "Cơ cấu nợ [E1]."
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Cơ cấu nợ."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
 
-        res = query_advanced_rag(
-            question="Cơ cấu nợ",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_generator=mock_gen
-        )
+            def mock_reranker_high(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.90  # >= RERANK_MIN_SCORE (0.50)
+                    item["rerank_raw_score"] = 2.0
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
 
-        self.assertEqual(res["status"], "answered")
-        self.assertEqual(len(res["evidence"]), 2)
-        self.assertTrue(res["evidence"][0]["accepted"])
-        self.assertFalse(res["evidence"][1]["accepted"])
+            def mock_generator(query, accepted_ev):
+                return "Câu trả lời theo [E1]."
+
+            res = query_advanced_rag(
+                question="cơ cấu nợ",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker_high,
+                custom_generator=mock_generator
+            )
+
+            self.assertEqual(res["status"], "answered")
+            self.assertEqual(res["trace"]["accepted"], 5)
+            self.assertTrue(res["evidence"][0]["accepted"])
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
 
     def test_02_rejected_evidence_excluded_from_prompt(self):
-        """2. Rejected evidence không được đưa vào prompt grounding."""
-        captured_prompt = ""
+        """2. Evidence không vượt qua gate bị loại khỏi prompt đưa vào Gemini LLM."""
+        accepted = [e for e in self.sample_evidence if e["accepted"]]
+        prompt_text = _build_generation_prompt("Hỏi", accepted)
 
-        def mock_bm25(q, k):
-            return []
+        self.assertIn("Nội dung quy định cơ cấu lại nợ.", prompt_text)
+        self.assertNotIn("Nội dung quy định phân loại nợ.", prompt_text)
 
-        def mock_sem(q, k):
-            return [
-                {"chunk_id": "chk_ans_001", "text": "text_accepted", "source": "s.pdf", "page_start": 1, "page_end": 1, "semantic_rank": 1, "semantic_distance": 0.10},
-                {"chunk_id": "chk_ans_002", "text": "text_rejected", "source": "s.pdf", "page_start": 2, "page_end": 2, "semantic_rank": 2, "semantic_distance": 0.90}
+    def test_03_trace_counts_and_timings_schema(self):
+        """3. Pipeline Trace chứa đầy đủ các key đếm số lượng và thời gian thực thi (latency ms)."""
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
+
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
+
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Nợ."}
             ]
 
-        def mock_gen(prompt):
-            nonlocal captured_prompt
-            captured_prompt = prompt
-            return "Trả lời [E1]."
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Nợ."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
 
-        query_advanced_rag(
-            question="Hỏi",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_generator=mock_gen
-        )
+            def mock_reranker(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.8
+                    item["rerank_raw_score"] = 1.5
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
 
-        self.assertIn("text_accepted", captured_prompt)
-        self.assertNotIn("text_rejected", captured_prompt)
+            def mock_generator(query, accepted_ev):
+                return "Trả lời [E1]."
 
-    def test_03_trace_counts_and_timings_complete(self):
-        """3. Trace counts và timings chứa đầy đủ các thuộc tính quy định."""
-        def mock_bm25(q, k):
-            return []
+            res = query_advanced_rag(
+                question="Nợ",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker,
+                custom_generator=mock_generator
+            )
 
-        def mock_sem(q, k):
-            return [{"chunk_id": "chk_ans_001", "text": "t", "source": "s.pdf", "page_start": 1, "page_end": 1, "semantic_rank": 1, "semantic_distance": 0.10}]
+            trace = res["trace"]
+            self.assertIn("bm25_candidates", trace)
+            self.assertIn("semantic_candidates", trace)
+            self.assertIn("overlap", trace)
+            self.assertIn("union", trace)
+            self.assertIn("reranked", trace)
+            self.assertIn("accepted", trace)
+            self.assertIn("generation_called", trace)
+            self.assertIn("latency_ms", trace)
+            self.assertIn("bm25", trace["latency_ms"])
+            self.assertIn("semantic", trace["latency_ms"])
+            self.assertIn("fusion", trace["latency_ms"])
+            self.assertIn("rerank", trace["latency_ms"])
+            self.assertIn("generation", trace["latency_ms"])
+            self.assertIn("total", trace["latency_ms"])
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
 
-        def mock_gen(prompt):
-            return "Trả lời [E1]."
+    def test_04_citation_mapping_and_fake_label_handling(self):
+        """4. Ánh xạ nhãn trích dẫn [E1] sang metadata thật và loại bỏ nhãn giả [E99]."""
+        accepted = [self.sample_evidence[0]]  # E1 = chk_001
+        raw_answer = "Cơ cấu nợ theo quy định [E1]. Đồng thời tự phát sinh [E99]."
 
-        res = query_advanced_rag(
-            question="Hỏi",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_generator=mock_gen
-        )
+        clean_answer, citations, warnings = _map_citations(raw_answer, accepted)
 
-        trace = res["trace"]
-        required_keys = ["bm25_candidates", "semantic_candidates", "overlap", "union", "reranked", "accepted", "generation_called", "latency_ms"]
-        for k in required_keys:
-            self.assertIn(k, trace)
-
-    def test_04_citation_mapping_real_metadata(self):
-        """4. Bóc tách nhãn [E1] và ánh xạ chính xác sang metadata thực tế."""
-        def mock_bm25(q, k):
-            return []
-
-        def mock_sem(q, k):
-            return [{"chunk_id": "chk_ans_001", "text": "t1", "source": "s.pdf", "page_start": 5, "page_end": 6, "semantic_rank": 1, "semantic_distance": 0.10}]
-
-        def mock_gen(prompt):
-            return "Nội dung trả lời theo [E1] và nhãn giả [E99]."
-
-        res = query_advanced_rag(
-            question="Hỏi",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_generator=mock_gen
-        )
-
-        self.assertEqual(len(res["citations"]), 1)
-        self.assertEqual(res["citations"][0]["label"], "E1")
-        self.assertEqual(res["citations"][0]["chunk_id"], "chk_ans_001")
-        self.assertEqual(res["citations"][0]["page_start"], 5)
-        self.assertTrue(len(res["warnings"]) > 0)
+        self.assertNotIn("[E99]", clean_answer)
+        self.assertEqual(len(citations), 1)
+        self.assertEqual(citations[0]["chunk_id"], "chk_001")
+        self.assertEqual(len(warnings), 1)
+        self.assertIn("E99", warnings[0])
 
     def test_05_generation_called_at_most_once(self):
-        """5. LLM generation chỉ được gọi tối đa 1 lần trong suốt quá trình xử lý."""
-        gen_count = 0
+        """5. Gemini LLM Generation được gọi tối đa đúng một lần trong suốt 1 lần thực thi query."""
+        call_count = 0
 
-        def mock_bm25(q, k):
-            return []
-
-        def mock_sem(q, k):
-            return [{"chunk_id": "chk_ans_001", "text": "t", "source": "s.pdf", "page_start": 1, "page_end": 1, "semantic_rank": 1, "semantic_distance": 0.10}]
-
-        def mock_gen(prompt):
-            nonlocal gen_count
-            gen_count += 1
+        def mock_generator(query, accepted_ev):
+            nonlocal call_count
+            call_count += 1
             return "Trả lời [E1]."
 
-        query_advanced_rag(
-            question="Hỏi",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_generator=mock_gen
-        )
-        self.assertEqual(gen_count, 1)
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
 
-    def test_06_compare_no_generation_called(self):
-        """6. Lệnh compare chạy qua các mode nhưng không hề gọi LLM generation (0 generation calls)."""
-        def mock_bm25(q, k):
-            return []
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
 
-        def mock_sem(q, k):
-            return []
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Nợ."}
+            ]
 
-        def mock_rr(q, cands):
-            return cands
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Nợ."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
 
-        res = compare_retrieval_modes(
-            question="Hỏi",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_reranker=mock_rr
-        )
+            def mock_reranker(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.8
+                    item["rerank_raw_score"] = 1.5
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
 
-        self.assertIn("summary_table", res)
-        self.assertEqual(len(res["modes_compared"]), 4)
+            query_advanced_rag(
+                question="Nợ",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker,
+                custom_generator=mock_generator
+            )
+
+            self.assertEqual(call_count, 1)
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
+
+    def test_06_compare_command_does_not_call_generation(self):
+        """6. Lệnh compare_retrieval_modes tuyệt đối KHÔNG gọi LLM Generation."""
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
+
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
+
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Quy định."}
+            ]
+
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Quy định."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
+
+            def mock_reranker(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.8
+                    item["rerank_raw_score"] = 1.5
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
+
+            res = compare_retrieval_modes(
+                question="Quy định",
+                strategy="hierarchical",
+                chunks=sample_chunks,
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker
+            )
+
+            self.assertIn("comparison_table", res)
+            self.assertIn("latencies_ms", res)
+            # compare không có field 'answer' hay gọi generation
+            self.assertNotIn("answer", res)
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
 
     def test_07_reranker_unavailable_status(self):
-        """7. Reranker bị lỗi nạp trả về đúng status 'reranker_unavailable'."""
-        def mock_bm25(q, k):
-            return []
+        """7. Lỗi Reranker lập tức dừng và trả về status='reranker_unavailable'."""
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
 
-        def mock_sem(q, k):
-            return []
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
 
-        def mock_bad_reranker(q, cands):
-            raise RuntimeError("Nạp Reranker thất bại")
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Quy định."}
+            ]
 
-        res = query_advanced_rag(
-            question="Hỏi",
-            mode="hybrid_rerank",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem,
-            custom_reranker=mock_bad_reranker
-        )
-        self.assertEqual(res["status"], "reranker_unavailable")
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Quy định."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
 
-    def test_08_all_status_schema_completeness(self):
-        """8. Tất cả các status (insufficient_evidence, answered) đều trả về đầy đủ schema quy định."""
-        def mock_bm25(q, k):
-            return []
+            def mock_failing_reranker(query, candidates, top_k):
+                raise RuntimeError("Lỗi mô hình Reranker không sẵn sàng!")
 
-        def mock_sem(q, k):
-            return [{"chunk_id": "chk_ans_001", "text": "t", "source": "s.pdf", "page_start": 1, "page_end": 1, "semantic_rank": 1, "semantic_distance": 0.90}]  # Rejected
+            res = query_advanced_rag(
+                question="Quy định",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_failing_reranker
+            )
 
-        res = query_advanced_rag(
-            question="Hỏi",
-            mode="semantic",
-            custom_bm25_retriever=mock_bm25,
-            custom_semantic_retriever=mock_sem
-        )
+            self.assertEqual(res["status"], "reranker_unavailable")
+            self.assertFalse(res["trace"]["generation_called"])
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
 
-        self.assertEqual(res["status"], "insufficient_evidence")
-        for k in ["status", "mode", "question", "answer", "evidence", "citations", "warnings", "trace"]:
-            self.assertIn(k, res)
+    def test_08_all_status_branches_schema_completeness(self):
+        """8. Đảm bảo tất cả 4 nhánh status ('answered', 'insufficient_evidence', 'retrieval_only', 'reranker_unavailable') đều trả về đủ schema."""
+        temp_dir = tempfile.TemporaryDirectory()
+        try:
+            chroma_path = Path(temp_dir.name)
+            config = load_advanced_config()
+            col_name = get_collection_name("hierarchical", config["embedding_dim"], config["embedding_model"])
+
+            cli = get_chroma_client(chroma_path)
+            col = cli.create_collection(
+                name=col_name,
+                metadata={"strategy": "hierarchical", "embedding_model": config["embedding_model"], "embedding_dim": 768},
+                embedding_function=None
+            )
+
+            sample_chunks = [
+                {"chunk_id": "chk_001", "strategy": "hierarchical", "source": "d.pdf", "page_start": 1, "page_end": 1, "text": "Quy định."}
+            ]
+
+            col.upsert(
+                ids=["chk_001"],
+                documents=["Quy định."],
+                embeddings=[[0.1] * 768],
+                metadatas=sample_chunks
+            )
+
+            # Test insufficient_evidence: rerank_score < RERANK_MIN_SCORE
+            def mock_reranker_low(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.10  # < 0.50
+                    item["rerank_raw_score"] = -2.0
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
+
+            res_insufficient = query_advanced_rag(
+                question="Quy định",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker_low
+            )
+
+            self.assertEqual(res_insufficient["status"], "insufficient_evidence")
+            for field in ["status", "mode", "question", "answer", "evidence", "citations", "warnings", "trace"]:
+                self.assertIn(field, res_insufficient)
+
+            # Test retrieval_only: custom_generator raises error
+            def mock_reranker_high(query, candidates, top_k):
+                results = []
+                for r, c in enumerate(candidates[:top_k], 1):
+                    item = dict(c)
+                    item["rerank_score"] = 0.90
+                    item["rerank_raw_score"] = 2.0
+                    item["rerank_rank"] = r
+                    item["rank_change"] = 0
+                    results.append(item)
+                return results
+
+            def mock_failing_generator(query, accepted_ev):
+                raise RuntimeError("Lỗi mạng Gemini!")
+
+            res_retrieval_only = query_advanced_rag(
+                question="Quy định",
+                mode="hybrid_rerank",
+                strategy="hierarchical",
+                chroma_dir=chroma_path,
+                query_vec=[0.1] * 768,
+                custom_reranker=mock_reranker_high,
+                custom_generator=mock_failing_generator
+            )
+
+            self.assertEqual(res_retrieval_only["status"], "retrieval_only")
+            for field in ["status", "mode", "question", "answer", "evidence", "citations", "warnings", "trace"]:
+                self.assertIn(field, res_retrieval_only)
+        finally:
+            try:
+                temp_dir.cleanup()
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":

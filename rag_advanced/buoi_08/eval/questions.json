@@ -22,36 +22,43 @@
   },
   {
     "query_id": "Q04",
-    "question": "Phân loại nợ và trích lập dự phòng được thực hiện như thế nào?",
+    "question": "Tổ chức tín dụng xử lý thế nào đối với các khoản tiền bù đắp tổn thất tài chính cho khoản vay bị rủi ro?",
     "relevant_chunk_ids": ["chk_adv_004", "chk_adv_003"],
     "scope": "in_scope",
     "needs_human_review": true
   },
   {
     "query_id": "Q05",
-    "question": "Doanh nghiệp gặp chướng ngại tài chính có được đề nghị gia hạn nợ không?",
+    "question": "Mức lãi suất chậm trả tối đa áp dụng là bao nhiêu theo quy định?",
     "relevant_chunk_ids": ["chk_adv_005"],
     "scope": "in_scope",
     "needs_human_review": true
   },
   {
     "query_id": "Q06",
-    "question": "Bên vay đối mặt bất lợi kinh tế có được giãn tiến độ thanh toán không?",
+    "question": "Khách hàng gặp khó khăn do thiên tai dịch bệnh có được gia hạn nợ không?",
     "relevant_chunk_ids": ["chk_adv_006"],
     "scope": "in_scope",
     "needs_human_review": true
   },
   {
     "query_id": "Q07",
-    "question": "Nghĩa vụ giám sát của chi nhánh Ngân hàng Nhà nước được quy định thế nào?",
+    "question": "Thời hạn cơ cấu lại thời hạn trả nợ tối đa là bao nhiêu tháng?",
     "relevant_chunk_ids": ["chk_adv_007"],
     "scope": "in_scope",
     "needs_human_review": true
   },
   {
     "query_id": "Q08",
-    "question": "Thủ tục xin cấp phép xây dựng nhà ở đô thị ở đâu?",
+    "question": "Tổ chức tín dụng phân loại nợ thành mấy nhóm?",
     "relevant_chunk_ids": ["chk_adv_008"],
+    "scope": "in_scope",
+    "needs_human_review": true
+  },
+  {
+    "query_id": "Q09",
+    "question": "Thủ tục xin cấp phép xây dựng nhà ở đô thị ở đâu?",
+    "relevant_chunk_ids": ["chk_adv_009"],
     "scope": "out_of_scope",
     "needs_human_review": true
   }

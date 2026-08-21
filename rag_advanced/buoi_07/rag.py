@@ -1,8 +1,8 @@
 """
-Module RAG Baseline - Buổi 08
-Sao chép từ Semantic Baseline Buổi 07 (rag_foundation/buoi_07/rag.py).
-Cung cấp các hàm load, validate, embedding, ChromaDB indexing, retrieval, confidence gate và citation mapping.
+Module RAG - Buổi 07
+Loader, Validator, Gemini Embeddings, ChromaDB Indexing, Retrieval, Confidence Gate & Citation Mapping
 """
+
 import os
 import sys
 import json
@@ -36,7 +36,10 @@ def load_config() -> dict:
     Nạp và xác thực cấu hình từ file .env bằng đường dẫn tuyệt đối.
     Không in ra giá trị API key.
     """
-    load_dotenv(dotenv_path=ENV_PATH)
+    if ENV_PATH.exists():
+        load_dotenv(dotenv_path=ENV_PATH)
+    else:
+        load_dotenv()
 
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
 
@@ -269,7 +272,7 @@ def generate_single_embedding(
 ) -> List[float]:
     """Tạo 1 vector embedding cho văn bản document qua Gemini API (hỗ trợ tự động parse retryDelay khi gặp 429)."""
     formatted_input = f"title: {source} | text: {text}"
-    max_retries = 15
+    max_retries = 8
     last_err = None
 
     for attempt in range(max_retries):
@@ -284,12 +287,11 @@ def generate_single_embedding(
             last_err = e
             err_msg = str(e)
             if ("429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower()) and attempt < max_retries - 1:
-                delay_match = re.search(r"retry(?:Delay)?['\":\s]+['\"]?(\d+(?:\.\d+)?)s?", err_msg, re.IGNORECASE)
+                delay_match = re.search(r"retry(?:Delay)?['\":\s]+(\d+(?:\.\d+)?)s?", err_msg, re.IGNORECASE)
                 if delay_match:
                     wait_seconds = float(delay_match.group(1)) + 2.0
                 else:
-                    wait_seconds = min(60.0, 2.0 ** (attempt + 2))
-                print(f"[GEMINI API 429] Bat gap Rate Limit. Dang tam dung {wait_seconds:.1f}s (lan {attempt + 1}/{max_retries})...")
+                    wait_seconds = min(45.0, 2.0 ** (attempt + 2))
                 time.sleep(wait_seconds)
                 continue
             raise RuntimeError(f"Lỗi khi gọi API Gemini embedding cho document '{source}': {err_msg}")
@@ -305,7 +307,7 @@ def generate_single_query_embedding(
 ) -> List[float]:
     """Tạo 1 vector embedding cho câu hỏi query qua Gemini API (hỗ trợ tự động parse retryDelay khi gặp 429)."""
     formatted_input = f"task: question answering | query: {question}"
-    max_retries = 15
+    max_retries = 8
     last_err = None
 
     for attempt in range(max_retries):
@@ -320,12 +322,11 @@ def generate_single_query_embedding(
             last_err = e
             err_msg = str(e)
             if ("429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower()) and attempt < max_retries - 1:
-                delay_match = re.search(r"retry(?:Delay)?['\":\s]+['\"]?(\d+(?:\.\d+)?)s?", err_msg, re.IGNORECASE)
+                delay_match = re.search(r"retry(?:Delay)?['\":\s]+(\d+(?:\.\d+)?)s?", err_msg, re.IGNORECASE)
                 if delay_match:
                     wait_seconds = float(delay_match.group(1)) + 2.0
                 else:
-                    wait_seconds = min(60.0, 2.0 ** (attempt + 2))
-                print(f"[GEMINI API 429] Bat gap Rate Limit. Dang tam dung {wait_seconds:.1f}s (lan {attempt + 1}/{max_retries})...")
+                    wait_seconds = min(45.0, 2.0 ** (attempt + 2))
                 time.sleep(wait_seconds)
                 continue
             raise RuntimeError(f"Lỗi khi gọi API Gemini query embedding: {err_msg}")
@@ -522,71 +523,15 @@ def run_index(
     load_res = load_chunks(input_dir=input_dir, strategy=strategy)
     chunks = load_res["chunks"]
 
-    if not chunks:
-        raise ValueError(f"Không tìm thấy chunk nào cho strategy '{strategy}'.")
-
-    client = get_chroma_client(chroma_dir)
-    col_name = get_collection_name(strategy, config["embedding_dim"], config["embedding_model"])
-
-    col_meta = {
-        "strategy": strategy,
-        "embedding_model": config["embedding_model"],
-        "embedding_dim": int(config["embedding_dim"]),
-        "distance_metric": "cosine",
-        "schema_version": "1.0"
-    }
-
-    if reset and any(c.name == col_name for c in client.list_collections()):
-        client.delete_collection(name=col_name)
-
-    existing_cols = [c.name for c in client.list_collections()]
-    if col_name not in existing_cols:
-        collection = client.create_collection(
-            name=col_name,
-            metadata=col_meta,
-            embedding_function=None,
-            configuration={"hnsw": {"space": "cosine"}}
-        )
-    else:
-        collection = client.get_collection(name=col_name, embedding_function=None)
-
-    verify_collection_metadata(collection, strategy, config)
-
-    genai_client = _get_genai_client(config["api_key"])
-
-    indexed_count = 0
-    for idx, chunk in enumerate(chunks, 1):
-        vec = generate_single_embedding(
-            client=genai_client,
-            text=chunk["text"],
-            source=chunk["source"],
-            model_name=config["embedding_model"],
-            dimension=config["embedding_dim"]
-        )
-        meta = {
-            "chunk_id": chunk["chunk_id"],
-            "strategy": chunk["strategy"],
-            "source": chunk["source"],
-            "page_start": int(chunk["page_start"]),
-            "page_end": int(chunk["page_end"]),
-            "embedding_model": config["embedding_model"],
-            "embedding_dim": int(config["embedding_dim"])
-        }
-        collection.upsert(
-            ids=[chunk["chunk_id"]],
-            documents=[chunk["text"]],
-            embeddings=[vec],
-            metadatas=[meta]
-        )
-        indexed_count += 1
-        time.sleep(0.05)
+    embeddings = generate_embeddings(chunks, config)
+    idx_res = index_chunks(chunks, embeddings, strategy, config, reset=reset, chroma_dir=chroma_dir)
 
     return {
         "status": "success",
         "strategy": strategy,
-        "collection_name": col_name,
-        "count": collection.count(),
-        "indexed_chunks": indexed_count,
+        "collection_name": idx_res["collection_name"],
+        "count": idx_res["count"],
+        "indexed_chunks": idx_res["indexed_chunks"],
         "empty_text_skipped": load_res["stats"]["empty_text_skipped"]
     }
 

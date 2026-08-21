@@ -1,181 +1,227 @@
-# ⚡ Project Advanced RAG - Buổi 08: Lexical Search, Fusion & Reranking
+# Advanced RAG Workshop - Buổi 08: Hybrid Search, RRF Fusion & Cross-Encoder Reranking
 
-Hệ thống RAG nâng cao 5 tầng (Multi-Stage Pipeline) xử lý tài liệu pháp lý tiếng Việt (Thông tư NHNN), nâng cấp vượt trội so với Semantic Baseline Buổi 07.
+## 📌 1. Mục tiêu & Khác biệt giữa Buổi 07 và Buổi 08
 
----
+Buổi 08 đại diện cho một bước nhảy vọt về kiến trúc RAG (Retrieval-Augmented Generation) chuyên biệt cho văn bản pháp lý tiếng Việt.
 
-## 🎯 1. Mục tiêu và Khác biệt Buổi 07 vs Buổi 08
-
-| Đặc điểm | Semantic Baseline (Buổi 07) | Advanced RAG (Buổi 08) |
+| Tiêu chí | Buổi 07 (Semantic Baseline) | Buổi 08 (Advanced RAG Pipeline) |
 |---|---|---|
-| **Phương pháp Truy xuất** | Chỉ dựa vào Semantic Vector Search | Kết hợp **BM25 Lexical** + **Gemini Semantic Vector** |
-| **Hợp nhất Danh sách** | Không có | **Reciprocal Rank Fusion (RRF)** rank-based fusion |
-| **Tái xếp hạng (Reranking)**| Không có | **Cross-Encoder Reranker** (`BAAI/bge-reranker-v2-m3`) |
-| **Gating Confidence** | Cosine Distance Gate (`<= 0.45`) | Rerank Sigmoided Score Gate (`>= 0.50`) |
-| **Giao diện Web** | Single-stage Q&A form | **Multi-stage 4-Tab Streamlit Dashboard** |
+| **Retrieval Stage** | Đơn nguồn: Semantic Vector Search (Gemini Embeddings + ChromaDB). | Đa nguồn: Hybrid Search (BM25 Lexical + Gemini Semantic Vector). |
+| **Search Combination** | Không có (chỉ dùng khoảng cách Cosine). | Reciprocal Rank Fusion (RRF) hợp nhất thứ hạng không phụ thuộc thang điểm. |
+| **Candidate Stage** | Trả trực tiếp top-k vector gần nhất. | Phân tầng: Candidate Stage (Top 20/20) $\to$ RRF Fusion $\to$ Reranking Stage (Top 5). |
+| **Reranking Stage** | Không có Reranker. | Mô hình Cross-Encoder đa ngôn ngữ `BAAI/bge-reranker-v2-m3` chấm điểm lại câu hỏi và văn bản. |
+| **Confidence Gate** | Đơn ngưỡng Cosine Distance (`RAG_MAX_DISTANCE`). | Đa tầng: Gate Cosine cho Semantic + Gate Sigmoid Score (`RERANK_MIN_SCORE`) cho Reranker. |
+| **Citation Mapping** | Gắn nhãn thủ công hoặc đơn giản. | Tự động bóc tách nhãn `[E1]`, `[E2]` sang metadata thật (`source`, `page_start`, `page_end`, `chunk_id`) và lọc nhãn giả. |
 
 ---
 
-## 🏗️ 2. Sơ đồ Kiến trúc Pipeline 5 Tầng
-
-```mermaid
-flowchart TD
-    Q[User Question] --> B[BM25 Lexical Search]
-    Q --> S[Semantic Vector Search]
-    
-    B -->|Top-20 Lexical Candidates| RRF[Reciprocal Rank Fusion - RRF]
-    S -->|Top-20 Semantic Candidates| RRF
-    
-    RRF -->|Top-20 Fused Candidates| RR[Cross-Encoder Reranker - BAAI/bge-reranker-v2-m3]
-    RR -->|Top-5 Final Candidates| G{Confidence Gate: score >= 0.50}
-    
-    G -->|Accepted Evidence| LLM[Grounded Gemini LLM Generation]
-    G -->|0 Accepted Evidence| IE[Status: insufficient_evidence]
-    
-    LLM --> Ans[Answer + Citations]
-```
-
----
-
-## 📁 3. Cấu trúc Project Buổi 08
+## 🏗️ 2. Sơ đồ Kiến trúc Pipeline 5 Tầng (Architecture Flowchart)
 
 ```text
-rag_advanced/buoi_08/
-├── SPEC_buoi_08.md          # Quy chuẩn thiết kế kỹ thuật Buổi 08
-├── README.md                # Tài liệu hướng dẫn sử dụng & nghiệm thu
-├── requirements.txt         # Danh sách dependency trực tiếp
-├── .env.example             # Template cấu hình biến môi trường
-├── .env                     # File biến môi trường local (chứa API Key)
-├── rag.py                   # Semantic base kế thừa Buổi 07
-├── advanced_rag.py          # Module chính: Tokenizer, BM25, RRF, Reranker, Query & Compare CLI
-├── evaluate.py              # Evaluator tính Recall@K, MRR@K, nDCG@K & Latency
-├── app.py                   # Streamlit Web UI 4 Tabs
+[User Query]
+     │
+     ├──► [Nhánh 1: BM25 Lexical Search] ────► Top 20 Candidate Chunks ──┐
+     │    (Tokenizer NFC, casefold, regex)                               │
+     │                                                                   ├─► [RRF Fusion] ─► Top 20 Candidates ─► [Cross-Encoder Reranker] ─► Top 5 Final
+     └──► [Nhánh 2: Gemini Vector Search] ───► Top 20 Candidate Chunks ──┘   (rrf_score = 1/(k+rank))               (bge-reranker-v2-m3)          │
+          (Gemini Embeddings + ChromaDB)                                                                                                            │
+                                                                                                                                                    ▼
+[Grounded Answer] ◄── [Gemini LLM Generation] ◄── [Grounded Prompt] ◄── [Confidence Gate & Citation Map] ◄──────────────────────────────────────────┘
+```
+
+---
+
+## 📂 3. Cấu trúc Project Buổi 08
+
+```text
+rag_foundation/buoi_08/
+├── SPEC_buoi_08.md                   # Specification chi tiết data contract & pipeline logic
+├── README.md                         # Tài liệu hướng dẫn sử dụng và báo cáo nghiệm thu
+├── requirements.txt                  # Danh sách phụ thuộc Python
+├── .env.example                      # Cấu hình biến môi trường mẫu
+├── .env                              # File cấu hình thực thi local
+├── .gitignore                        # Cấu hình Git ignore
+├── rag.py                            # Baseline Semantic RAG (sao chép từ Buổi 07)
+├── advanced_rag.py                   # Module Advanced RAG chính (BM25, RRF, Reranker, Query, Compare)
+├── evaluate.py                       # Framework Đánh giá Offline (Recall@K, MRR@K, nDCG@K)
+├── app.py                            # Ứng dụng Streamlit Dashboard 4 Tabs
 ├── eval/
-│   └── questions.json       # Tập câu hỏi benchmark gold labels
-├── reports/                 # Thư mục lưu báo cáo JSON kết quả đánh giá
-│   └── .gitkeep
-└── storage/                 # Lưu trữ ChromaDB và Hugging Face cache
-    ├── chroma/              # Database ChromaDB local
-    └── huggingface/         # Cache model Cross-Encoder Reranker (~2.2GB)
+│   └── questions.json                # Tập câu hỏi benchmark nghiệm thu
+├── tests/
+│   ├── __init__.py
+│   ├── test_bm25.py                  # Unit tests BM25 Tokenizer & Search (8/8 PASS)
+│   ├── test_semantic.py              # Unit tests Semantic Candidate Stage (6/6 PASS)
+│   ├── test_hybrid.py                # Unit tests RRF Fusion & Hybrid Search (10/10 PASS)
+│   ├── test_reranker.py              # Unit tests Cross-Encoder Reranker (10/10 PASS)
+│   ├── test_answer.py                # Unit tests Answer Pipeline & Grounding (8/8 PASS)
+│   └── test_evaluator.py             # Unit tests Metric Formulas & Evaluator (5/5 PASS)
+├── reports/                          # Thư mục lưu báo cáo JSON tự động
+└── storage/                          # Thư mục lưu trữ đĩa ChromaDB và Hugging Face cache
+    ├── chroma/
+    └── huggingface/
 ```
 
 ---
 
-## ⚙️ 4. Thiết lập Môi trường (.venv, requirements & .env)
+## ⚙️ 4. Khởi tạo Môi trường (.venv, requirements & .env)
 
+1. **Kích hoạt Python Virtual Environment**:
+   ```bash
+   & "D:\Rag_thuchanh\RAG\rag_foundation\buoi_05\.venv\Scripts\Activate.ps1"
+   ```
+2. **Cài đặt Dependency**:
+   ```bash
+   pip install -r rag_foundation/buoi_08/requirements.txt
+   ```
+3. **Cấu hình File `.env`**:
+   Tạo file `.env` tại `rag_foundation/buoi_08/.env` dựa trên `.env.example`:
+   ```ini
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+   GEMINI_EMBEDDING_MODEL=gemini-embedding-2
+   GEMINI_EMBEDDING_DIM=768
+   GEMINI_GENERATION_MODEL=gemini-3.5-flash-lite
+   RAG_MAX_DISTANCE=0.45
+   BM25_CANDIDATES=20
+   SEMANTIC_CANDIDATES=20
+   RRF_K=60
+   RRF_BM25_WEIGHT=1.0
+   RRF_SEMANTIC_WEIGHT=1.0
+   RERANK_CANDIDATES=20
+   FINAL_TOP_K=5
+   RERANKER_MODEL=BAAI/bge-reranker-v2-m3
+   RERANKER_MAX_LENGTH=512
+   RERANK_BATCH_SIZE=4
+   RERANK_MIN_SCORE=0.50
+   RERANK_DEVICE=auto
+   ```
+
+---
+
+## ⚠️ 5. Cảnh báo Tài nguyên đối với Mô hình Reranker
+
+Mô hình Reranker mặc định **`BAAI/bge-reranker-v2-m3`** là một mô hình Cross-Encoder đa ngôn ngữ (Multilingual Transformer):
+- **Kích thước tải**: ~**2.2 GB** từ Hugging Face Hub (Lưu tại `storage/huggingface/`).
+- **Yêu cầu bộ nhớ**: Ít nhất **4 GB RAM trống** (hoặc **2 GB VRAM GPU** nếu chạy `device=cuda`).
+- **Thời gian nạp đầu tiên**: Cần kết nối Internet và mất từ 1 – 3 phút tùy tốc độ mạng.
+- **Tốc độ suy luận CPU**: Khoảng 50ms – 200ms cho mỗi batch candidate.
+
+---
+
+## 💻 6. Danh sách Lệnh CLI Chẩn đoán (`advanced_rag.py`)
+
+### 6.1 Lệnh Status (Read-only System Check)
 ```bash
-# 1. Kích hoạt môi trường Python (dùng chung interpreter Buổi 05)
-& "D:\Rag_thuchanh\RAG\rag_foundation\buoi_05\.venv\Scripts\python.exe" -m pip install -r rag_advanced/buoi_08/requirements.txt
-
-# 2. Tạo file .env từ template
-cp rag_advanced/buoi_08/.env.example rag_advanced/buoi_08/.env
-
-# 3. Điền GEMINI_API_KEY trong file rag_advanced/buoi_08/.env
+python rag_foundation/buoi_08/advanced_rag.py status --strategy hierarchical
 ```
 
----
-
-## ⚠️ 5. Cảnh báo Kích thước & Tài nguyên Reranker Model
-
-- **Mô hình**: `BAAI/bge-reranker-v2-m3` (~2.2GB weights).
-- **Yêu cầu đĩa & RAM**: Cần tối thiểu ~3GB dung lượng đĩa trống tại `storage/huggingface/` và ~4GB RAM khả dụng.
-- **Cấu hình Device**: Mặc định `RERANK_DEVICE=auto` (sử dụng GPU CUDA nếu khả dụng, ngược lại chạy trên CPU).
-
----
-
-## 💻 6. Danh mục Lệnh CLI Subcommands
-
+### 6.2 Lệnh Index Vector (Prepare Semantic)
 ```bash
-# 1. Kiểm tra trạng thái hệ thống (Read-only)
-python rag_advanced/buoi_08/advanced_rag.py status --strategy hierarchical
-
-# 2. Khởi tạo Index Vector Semantic
-python rag_advanced/buoi_08/advanced_rag.py prepare-semantic --strategy hierarchical
-
-# 3. Truy xuất BM25 Lexical từ khóa
-python rag_advanced/buoi_08/advanced_rag.py bm25 --strategy hierarchical --question "Điều 7 quy định gì?"
-
-# 4. Truy xuất Semantic Vector
-python rag_advanced/buoi_08/advanced_rag.py semantic --strategy hierarchical --question "Điều 7 quy định gì?"
-
-# 5. Truy xuất Hybrid RRF
-python rag_advanced/buoi_08/advanced_rag.py hybrid --strategy hierarchical --question "Điều 7 quy định gì?"
-
-# 6. Truy xuất Cross-Encoder Rerank
-python rag_advanced/buoi_08/advanced_rag.py rerank --strategy hierarchical --question "Điều 7 quy định gì?"
-
-# 7. Hỏi đáp RAG Nâng cao (Có Grounding & Citations, gọi LLM 1 lần)
-python rag_advanced/buoi_08/advanced_rag.py query --mode hybrid_rerank --strategy hierarchical --question "Điều 7 quy định gì?"
-
-# 8. So sánh 4 Modes Retrieval (KHÔNG gọi LLM generation)
-python rag_advanced/buoi_08/advanced_rag.py compare --strategy hierarchical --question "Điều 7 quy định gì?"
+python rag_foundation/buoi_08/advanced_rag.py prepare-semantic --strategy hierarchical
 ```
 
----
-
-## 🧪 7. Lệnh Chạy Unittest, Evaluator & Streamlit App
-
+### 6.3 Lệnh Truy xuất BM25 Lexical Search
 ```bash
-# 1. Chạy toàn bộ 47 Unittests (100% Offline)
-python -m unittest discover -s rag_advanced/buoi_08/tests -p "test_*.py" -v
+python rag_foundation/buoi_08/advanced_rag.py bm25 --strategy hierarchical --question "Điều 7 quy định gì?"
+```
 
-# 2. Chạy Báo cáo Đánh giá Benchmark Metrics
-python rag_advanced/buoi_08/evaluate.py --strategy hierarchical --k 5
+### 6.4 Lệnh Truy xuất Semantic Search
+```bash
+python rag_foundation/buoi_08/advanced_rag.py semantic --strategy hierarchical --question "Điều 7 quy định gì?"
+```
 
-# 3. Khởi chạy Streamlit Web App
-python -m streamlit run rag_advanced/buoi_08/app.py
+### 6.5 Lệnh Dung hợp Hybrid RRF Search
+```bash
+python rag_foundation/buoi_08/advanced_rag.py hybrid --strategy hierarchical --question "Điều 7 quy định gì?"
+```
+
+### 6.6 Lệnh Reranking Chấm điểm lại Candidate
+```bash
+python rag_foundation/buoi_08/advanced_rag.py rerank --strategy hierarchical --question "Điều 7 quy định gì?"
+```
+
+### 6.7 Lệnh Hỏi đáp Advanced RAG (Query - Gọi LLM Generation 1 lần)
+```bash
+python rag_foundation/buoi_08/advanced_rag.py query --mode hybrid_rerank --strategy hierarchical --question "Điều 7 quy định gì?"
+```
+
+### 6.8 Lệnh So sánh thứ tự Xếp hạng 4 Modes (Compare - KHÔNG gọi LLM Generation)
+```bash
+python rag_foundation/buoi_08/advanced_rag.py compare --strategy hierarchical --question "Điều 7 quy định gì?"
 ```
 
 ---
 
-## 📊 8. Giải thích Thang điểm Metrics (Scores)
+## 🧪 7. Lệnh Chạy Unittest, Evaluator & Streamlit Web App
 
-1. **BM25 Score**: Điểm số tần suất từ khóa khớp chính xác (*Càng cao càng tốt*).
-2. **Cosine Distance**: Khoảng cách vector giữa query và document (*Càng nhỏ càng tốt, 0.0 là trùng khớp tuyệt đối*).
-3. **RRF Score**: Điểm số Reciprocal Rank Fusion kết hợp thứ hạng từ BM25 và Semantic (*Càng cao càng tốt*).
-4. **Rerank Score**: Điểm Sigmoid `1/(1 + exp(-logit))` từ Cross-Encoder (*Càng cao càng tốt; Đây là điểm tự tin của mô hình, KHÔNG PHẢI xác suất toán học*).
+### 7.1 Chạy Toàn bộ 47 Unittests (100% Offline)
+```bash
+python -m unittest discover -s "rag_foundation/buoi_08/tests" -p "test_*.py" -v
+```
 
----
+### 7.2 Chạy Framework Đánh giá Offline (Evaluator)
+```bash
+python rag_foundation/buoi_08/evaluate.py --strategy hierarchical --k 5
+```
 
-## 🎛️ 9. Giải thích Candidate K và Final K
-
-- **`BM25_CANDIDATES` (20)** & **`SEMANTIC_CANDIDATES` (20)**: Số lượng ứng viên thô ban đầu được lấy từ mỗi nhánh.
-- **`RERANK_CANDIDATES` (20)**: Số lượng ứng viên hợp nhất sau RRF được đưa vào Cross-Encoder Reranker.
-- **`FINAL_TOP_K` (5)**: Số lượng ứng viên cuối cùng được giữ lại để kiểm tra Gating và đưa vào prompt grounding.
-
----
-
-## 📈 10. Chỉ số Đánh giá Metrics & Giới hạn Gold Labels
-
-- **Recall@K**: Tỷ lệ tìm thấy tài liệu chuẩn trong Top-K.
-- **MRR@K**: Điểm số vị trí đầu tiên xuất hiện tài liệu chuẩn.
-- **nDCG@K**: Điểm số xếp hạng giảm dần có trọng số vị trí.
-- **Giới hạn Gold Labels**: Các câu hỏi có `needs_human_review: true` được hiển thị cảnh báo và **không được công nhận mode chiến thắng chính thức** cho tới khi hoàn tất kiểm duyệt thủ công.
+### 7.3 Khởi chạy Giao diện Web App Streamlit 4 Tabs
+```bash
+python -m streamlit run rag_foundation/buoi_08/app.py
+```
 
 ---
 
-## 🔍 11. Câu hỏi So sánh Đánh giá Thực tế (Manual Comparison Questions)
+## 📊 8. Giải thích các Thang điểm Đánh giá (Score Metrics)
 
-### A. Exact Legal Reference:
-> *Question*: `Điều 7 quy định như thế nào về cơ cấu lại thời hạn trả nợ?`  
-> *Nhận xét*: **BM25** và **Hybrid Rerank** xếp chunk `Điều 7` ở vị trí Top-1 chính xác nhờ chứa từ khóa pháp lý tuyệt đối.
-
-### B. Paraphrase Semantic:
-> *Question*: `Khách hàng gặp khó khăn có thể được điều chỉnh kỳ hạn trả nợ ra sao?`  
-> *Nhận xét*: **Semantic** và **Hybrid Rerank** vượt trội nhờ bắt được đồng nghĩa (`điều chỉnh kỳ hạn` ≈ `cơ cấu lại thời hạn`), trong khi BM25 thuần túy bị giảm thứ hạng do thiếu từ khóa trùng khớp.
-
-### C. Multi-concept:
-> *Question*: `Phân loại nợ và trích lập dự phòng được thực hiện như thế nào?`  
-> *Nhận xét*: **Hybrid RRF** tổng hợp hoàn hảo các chunks từ cả 2 chủ đề (`phân loại nợ` và `trích lập dự phòng`) mà 1 nhánh đơn lẻ bị bỏ sót.
-
-### D. Out-of-scope:
-> *Question*: `Ngân hàng nào có lãi suất tiết kiệm cao nhất hôm nay?`  
-> *Nhận xét*: Toàn bộ candidates đều bị rejected qua Confidence Gate (`rerank_score < 0.50`), hệ thống trả về đúng status `insufficient_evidence`.
+- **BM25 Score**: Điểm số tần suất xuất hiện từ khóa khớp chính xác theo thuật toán BM25Okapi (*Càng cao càng tốt*).
+- **Cosine Distance**: Khoảng cách Cosine giữa 2 vector embedding (*Càng nhỏ càng tốt, 0.0 là khớp tuyệt đối*).
+- **RRF Score**: Điểm sốReciprocal Rank Fusion tổng hợp vị trí thứ hạng từ nhiều hệ thống (*Càng cao càng tốt, nằm trong (0, 1]*).
+- **Rerank Score**: Điểm số Sigmoid chuẩn hóa trong khoảng `[0.0, 1.0]` từ raw logit của Cross-Encoder Transformer (*Càng cao càng tốt; Đây là score chuẩn hóa của mô hình, không phải xác suất toán học*).
 
 ---
 
-## 🚨 12. Troubleshooting & Miễn trừ Trách nhiệm
+## 🎯 9. Giải thích Candidate K và Final Top-K
 
-- **Tải model thất bại / Mạng chậm**: Đảm bảo đường truyền ổn định khi nạp model lần đầu tiên (~2.2GB).
-- **CPU suy luận chậm**: Giảm `RERANK_BATCH_SIZE=2` hoặc giảm `RERANK_CANDIDATES=10`.
-- **Miễn trừ trách nhiệm**: Dự án chỉ phục vụ mục đích nghiên cứu thử nghiệm công nghệ RAG, KHÔNG PHẢI TƯ VẤN PHÁP LÝ.
+- **`BM25_CANDIDATES` (20)** & **`SEMANTIC_CANDIDATES` (20)**: Số lượng candidate tối đa rút ra ở vòng sơ tuyển của mỗi nhánh.
+- **`RERANK_CANDIDATES` (20)**: Số lượng candidate tối đa được đưa vào mô hình Cross-Encoder để tái chấm điểm.
+- **`FINAL_TOP_K` (5)**: Số lượng candidate xuất sắc nhất sau khi rerank được đưa làm bằng chứng (Evidence) cho LLM tổng hợp câu trả lời.
+
+---
+
+## 📈 10. Chỉ số Đánh giá (Evaluation Metrics) & Giới hạn Gold Labels
+
+- **Recall@K**: Tỷ lệ tài liệu chuẩn khớp tìm thấy trong top-K.
+- **MRR@K (Mean Reciprocal Rank)**: Điểm số vị trí của tài liệu chuẩn đầu tiên xuất hiện trong kết quả.
+- **nDCG@K**: Điểm số đánh giá mức độ ưu tiên xếp các tài liệu chuẩn lên các vị trí cao nhất.
+- **⚠️ Giới hạn Gold Labels**: Các câu hỏi trong `eval/questions.json` chứa thuộc tính `"needs_human_review": true`. Do đó, kết quả đánh giá mang tính chất tham khảo chẩn đoán kỹ thuật, chưa tuyên bố mode nào thắng chính thức cho đến khi nhãn được nghiệm thu bởi chuyên gia pháp lý.
+
+---
+
+## 🔍 11. Các Lựa chọn Thử nghiệm So sánh Chẩn đoán (Manual Comparison Questions)
+
+Để chẩn đoán chéo hiệu năng của 4 mode (`bm25`, `semantic`, `hybrid`, `hybrid_rerank`), hệ thống kiểm thử qua 4 dạng câu hỏi điển hình:
+
+- **A. Exact Legal Reference (Truy xuất điều khoản chính xác)**:
+  `"Điều 7 quy định như thế nào về cơ cấu lại thời hạn trả nợ?"`
+- **B. Paraphrase Semantic (Diễn đạt tự nhiên/Đồng nghĩa)**:
+  `"Khách hàng gặp khó khăn có thể được điều chỉnh kỳ hạn trả nợ ra sao?"`
+- **C. Multi-concept (Đa khái niệm pháp lý)**:
+  `"Phân loại nợ và trích lập dự phòng được thực hiện như thế nào?"`
+- **D. Out-of-scope (Ngoài phạm vi tài liệu)**:
+  `"Ngân hàng nào có lãi suất tiết kiệm cao nhất hôm nay?"`
+
+---
+
+## 🔧 12. Troubleshooting & Xử lý Lỗi thường gặp
+
+1. **Lỗi `429 RESOURCE_EXHAUSTED` (Gemini API Rate Limit)**:
+   - Hệ thống tự động phát hiện `retryDelay` và tạm dừng chờ retry tự động. Nếu quá hạn ngạch ngày, hãy đợi sau 24h hoặc đổi API key.
+2. **Lỗi Reranker tải lâu hoặc thiếu bộ nhớ RAM**:
+   - Khi chạy lần đầu, hãy đảm bảo Internet ổn định. Nếu RAM quá nhỏ, cấu hình `RERANK_DEVICE=cpu` và `RERANK_BATCH_SIZE=2` trong `.env`.
+3. **Lỗi `Collection ... chưa tồn tại`**:
+   - Hãy chủ động chạy lệnh `python rag_foundation/buoi_08/advanced_rag.py prepare-semantic --strategy hierarchical` để khởi tạo vector index.
+
+---
+
+## ⚖️ 13. Tuyên bố Miễn trừ Trách nhiệm (Legal Disclaimer)
+
+Hệ thống RAG này được thiết kế phục vụ mục đích nghiên cứu và hỗ trợ tra cứu thông tin học thuật. Sản phẩm **KHÔNG PHẢI VĂN BẢN TƯ VẤN PHÁP LÝ CHÍNH THỨC** và không thay thế cho các văn bản pháp luật hiện hành do Ngân hàng Nhà nước Việt Nam công bố.

@@ -5,5 +5,5 @@ storage/chroma/
 storage/huggingface/
 reports/*.json
 .streamlit/
-!reports/.gitkeep
 !storage/.gitkeep
+!reports/.gitkeep
