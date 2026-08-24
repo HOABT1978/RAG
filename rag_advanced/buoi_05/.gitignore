@@ -1,0 +1,7 @@
+# Buổi 5 — không commit secret, output hay môi trường ảo
+.env
+.venv/
+output/
+__pycache__/
+*.pyc
+.DS_Store

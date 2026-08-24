@@ -1,115 +1,95 @@
-"""Kiểm tra môi trường OCR/RAG cho bài thực hành Buổi 5.
+# -*- coding: utf-8 -*-
+"""check_ocr_env.py — Kiểm tra môi trường OCR (PASS/FAIL).
 
-Mặc định chương trình chỉ kiểm tra. Dùng ``--fix`` để cài các thư viện bị thiếu
-vào đúng môi trường Python đang chạy chương trình này.
+In bảng kết quả kiểm tra các công cụ cần thiết cho Buổi 5:
+Python, PyMuPDF (fitz), Pillow, llama_cloud, Pydantic, Streamlit, python-dotenv.
+Đồng thời kiểm tra thư mục datademo/ có PDF tiếng Việt hay không.
+
+Cách chạy:
+    python src/check_ocr_env.py
 """
 
 from __future__ import annotations
 
-import argparse
 import importlib
-import importlib.metadata
-import subprocess
+import shutil
 import sys
-from dataclasses import dataclass
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATADEMO = BASE_DIR / "datademo"
+
+REQUIRED_PACKAGES = [
+    ("pymupdf", "PyMuPDF (đọc PDF)"),
+    ("PIL", "Pillow (xử lý ảnh)"),
+    ("llama_cloud", "llama-cloud (Llamaparse OCR)"),
+    ("pydantic", "Pydantic (validate dữ liệu)"),
+    ("streamlit", "Streamlit (UI)"),
+    ("dotenv", "python-dotenv (đọc .env)"),
+]
 
 
-@dataclass(frozen=True)
-class Dependency:
-    """Một thư viện cần cho quy trình trích xuất PDF tiếng Việt."""
-
-    display_name: str
-    package_name: str
-    import_name: str
-    purpose: str
-
-
-DEPENDENCIES = (
-    Dependency("PyMuPDF", "PyMuPDF", "fitz", "Đọc nội dung và ảnh từ PDF"),
-    Dependency("Pillow", "Pillow", "PIL", "Xử lý ảnh trang PDF khi cần"),
-    Dependency("Llama Cloud", "llama-cloud", "llama_cloud", "Kết nối dịch vụ Llama Cloud"),
-    Dependency("Pydantic", "pydantic", "pydantic", "Kiểm tra cấu trúc dữ liệu"),
-    Dependency("Streamlit", "streamlit", "streamlit", "Tạo giao diện thử nghiệm"),
-    Dependency("python-dotenv", "python-dotenv", "dotenv", "Đọc cấu hình từ tệp .env"),
-)
+def check_python() -> tuple[bool, str]:
+    version = sys.version.split()[0]
+    major, minor, *_ = sys.version_info
+    ok = major == 3 and minor >= 10
+    msg = f"Python {version}"
+    if not ok:
+        msg += " (cần Python 3.10+)"
+    return ok, msg
 
 
-def installed_version(dependency: Dependency) -> str | None:
-    """Trả về phiên bản nếu import được; không đọc cấu hình hay secret."""
+def check_package(module: str) -> tuple[bool, str]:
     try:
-        importlib.import_module(dependency.import_name)
-        return importlib.metadata.version(dependency.package_name)
-    except (ImportError, ModuleNotFoundError, importlib.metadata.PackageNotFoundError):
-        return None
+        mod = importlib.import_module(module)
+        return True, f"{module} {getattr(mod, '__version__', '?')}"
+    except Exception as exc:  # noqa: BLE001
+        return False, f"{module} — LỖI: {type(exc).__name__}: {exc}"
 
 
-def print_table(rows: list[tuple[str, str, str]]) -> None:
-    """In bảng văn bản không cần thư viện bên ngoài."""
-    headers = ("Công cụ", "Trạng thái", "Phiên bản / ghi chú")
-    widths = [len(header) for header in headers]
-    for row in rows:
-        for index, value in enumerate(row):
-            widths[index] = max(widths[index], len(value))
-
-    def line(values: tuple[str, str, str]) -> str:
-        return "| " + " | ".join(value.ljust(widths[i]) for i, value in enumerate(values)) + " |"
-
-    print(line(headers))
-    print("|-" + "-|-".join("-" * width for width in widths) + "-|")
-    for row in rows:
-        print(line(row))
+def check_pdf_dir() -> tuple[bool, str]:
+    if not DATADEMO.exists():
+        return False, f"Không thấy thư mục: {DATADEMO}"
+    pdfs = sorted(DATADEMO.glob("*.pdf"))
+    if not pdfs:
+        return False, f"{DATADEMO} không chứa file PDF nào"
+    names = ", ".join(p.name for p in pdfs)
+    return True, f"Tìm thấy {len(pdfs)} PDF: {names}"
 
 
-def install_missing(missing: list[Dependency]) -> int:
-    """Cài duy nhất các gói đã FAIL bằng pip của môi trường hiện hành."""
-    if not missing:
-        print("Không có trạng thái FAIL cần khắc phục.")
-        return 0
+def main() -> None:
+    print("=== KIỂM TRA MÔI TRƯỜNG OCR — BUỔI 5 ===\n")
+    rows = [("Python", check_python())]
+    for module, label in REQUIRED_PACKAGES:
+        rows.append((label, check_package(module)))
+    rows.append(("datademo/", check_pdf_dir()))
 
-    packages = [dependency.package_name for dependency in missing]
-    print("Đang khắc phục các gói FAIL: " + ", ".join(packages))
-    print("Lưu ý: pip sẽ tải gói công khai từ kho đã cấu hình; không có secret nào được in ra.")
-    result = subprocess.run([sys.executable, "-m", "pip", "install", *packages], check=False)
-    if result.returncode == 0:
-        print("Đã chạy cài đặt xong. Hãy chạy lại lệnh kiểm tra để xác nhận PASS.")
+    width_name = max(len(name) for name, _ in rows)
+    print(f"{'Công cụ'.ljust(width_name)}  {'Trạng thái':<8}  Chi tiết")
+    print("-" * (width_name + 40))
+    all_ok = True
+    for name, (ok, msg) in rows:
+        status = "PASS" if ok else "FAIL"
+        if not ok:
+            all_ok = False
+        print(f"{name.ljust(width_name)}  {status:<8}  {msg}")
+
+    print()
+    if all_ok:
+        print("KẾT LUẬN: Mọi thứ đã sẵn sàng — có thể chạy pipeline OCR & chunking.")
     else:
-        print("Cài đặt chưa thành công. Hãy kiểm tra kết nối mạng, quyền truy cập PyPI, hoặc phiên bản Python.")
-    return result.returncode
-
-
-def main() -> int:
-    # PowerShell cũ trên Windows có thể dùng CP1252; ép UTF-8 để bảng tiếng Việt
-    # luôn in được mà không phụ thuộc vào cấu hình terminal của người học.
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-
-    parser = argparse.ArgumentParser(description="Kiểm tra các thư viện OCR/RAG của Buổi 5.")
-    parser.add_argument("--fix", action="store_true", help="Cài các thư viện đang FAIL bằng pip.")
-    args = parser.parse_args()
-
-    rows = [("Python", "PASS", sys.version.split()[0])]
-    missing: list[Dependency] = []
-    for dependency in DEPENDENCIES:
-        version = installed_version(dependency)
-        if version is None:
-            rows.append((dependency.display_name, "FAIL", f"Thiếu — {dependency.purpose}"))
-            missing.append(dependency)
-        else:
-            rows.append((dependency.display_name, "PASS", f"{version} — {dependency.purpose}"))
-
-    print_table(rows)
-    if missing:
-        print("\nHướng dẫn khắc phục:")
-        for dependency in missing:
-            print(f"- {dependency.display_name}: chạy lại với --fix để cài gói {dependency.package_name}.")
-        if not args.fix:
-            print("\nChế độ hiện tại chỉ kiểm tra, không tải/cài phần mềm.")
-            print(f"Khi đã được phép cài đặt, chạy: {sys.executable} {__file__} --fix")
-            return 1
-    if args.fix:
-        return install_missing(missing)
-    return 0
+        print("KẾT LUẬN: Có mục FAIL. Hướng khắc phục:")
+        print("  1. Cài gói bị thiếu:  pip install -r requirements.txt")
+        print("  2. Kiểm tra file .env trong src/ có dòng LLAMA_CLOUD_API_KEY='...'")
+        print("  3. Kiểm tra thư mục datademo/ có ít nhất 1 file PDF tiếng Việt")
+        print("  4. Nếu import thất bại: chạy lại bằng python của .venv:")
+        print("     .venv\\Scripts\\python.exe src\\check_ocr_env.py")
+        print()
+        print("Các gói có thể cài thủ công:")
+        print("  .venv\\Scripts\\python.exe -m pip install pymupdf pillow llama-cloud pydantic streamlit python-dotenv")
+        if not shutil.which("python"):
+            print("  (Cảnh báo: không tìm thấy python trong PATH — hãy dùng đường dẫn .venv)")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
