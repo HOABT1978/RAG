@@ -14,6 +14,23 @@ scripts_dir = os.path.join(script_dir, 'scripts')
 if scripts_dir not in sys.path:
     sys.path.append(scripts_dir)
 
+def clean_citation(citation_str):
+    if not isinstance(citation_str, str):
+        return citation_str
+    clean = citation_str.strip()
+    if clean.startswith('[') and clean.endswith(']'):
+        clean = clean[1:-1]
+    parts = [p.strip() for p in clean.split('|')]
+    if len(parts) > 1:
+        last = parts[-1].lower()
+        if (last.startswith('doc_') or 
+            last.startswith('chk_') or 
+            last.startswith('chunk_') or 
+            'điều_' in last or 
+            '_' in last):
+            parts = parts[:-1]
+    return " | ".join(parts)
+
 # Set Page Config with custom title and icon
 st.set_page_config(
     page_title="AI Compliance & Audit System - Agribank",
@@ -281,50 +298,42 @@ with tab1:
                     )
             
             # Render each conflict in a card
+            # Render each conflict in a native Streamlit card (prevents raw HTML rendering bugs)
             for idx, row in df_conf.iterrows():
-                sev = str(row['severity']).upper()
-                if sev == 'HIGH':
-                    sev_badge = "<span class='badge badge-high'>HIGH</span>"
-                elif sev == 'MEDIUM':
-                    sev_badge = "<span class='badge badge-medium'>MEDIUM</span>"
-                else:
-                    sev_badge = "<span class='badge badge-low'>LOW</span>"
+                with st.container(border=True):
+                    # Title and Badges
+                    c_col1, c_col2 = st.columns([3, 1])
+                    with c_col1:
+                        st.subheader(f"🛡️ Mã xung đột: {row['conflict_id']}")
+                    with c_col2:
+                        sev = str(row['severity']).upper()
+                        if sev == 'HIGH':
+                            st.error("🚨 Severity: HIGH")
+                        elif sev == 'MEDIUM':
+                            st.warning("⚠️ Severity: MEDIUM")
+                        else:
+                            st.info("ℹ️ Severity: LOW")
+                            
+                    st.markdown(f"**Miền nghiệp vụ:** `{row['domain']}` | **Loại mâu thuẫn:** `{row['conflict_type']}` | **Trạng thái:** `{row['review_status']}`")
+                    st.divider()
                     
-                review_badge = f"<span class='badge badge-review'>{row['review_status']}</span>"
-                
-                st.markdown(f"""
-                <div class='glass-card'>
-                    <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;'>
-                        <span style='font-size:1.25em; font-weight:700; color:#e11d48;'>Mã xung đột: {row['conflict_id']}</span>
-                        <div class="badges-wrapper">
-                            {sev_badge}
-                            {review_badge}
-                        </div>
-                    </div>
-                    <div style='margin-top:10px; font-size:1.05em;'>
-                        <strong>Miền nghiệp vụ</strong>: <code>{row['domain']}</code> | 
-                        <strong>Loại mâu thuẫn</strong>: <code style='color:#fbbf24;'>{row['conflict_type']}</code>
-                    </div>
+                    # Columns A & B for policy comparison
+                    col_a, col_b = st.columns(2)
+                    with col_a:
+                        st.markdown(f"🟢 **Văn bản nội bộ (A)**: `{row['doc_a_id']}`")
+                        st.caption(f"Trích dẫn: {clean_citation(row['doc_a_citation'])}")
+                        st.markdown(f"*{row['doc_a_text']}*")
+                        
+                    with col_b:
+                        st.markdown(f"🔴 **Quy định pháp lý / SBV (B)**: `{row['doc_b_id']}`")
+                        st.caption(f"Trích dẫn: {clean_citation(row['doc_b_citation'])}")
+                        st.markdown(f"*{row['doc_b_text']}*")
+                        
+                    st.divider()
                     
-                    <div style='margin-top:15px; display:grid; grid-template-columns: 1fr 1fr; gap:20px; border-top:1px solid #1e293b; padding-top:15px;'>
-                        <div>
-                            <span style='color:#34d399; font-weight:600;'>Văn bản nội bộ (A)</span>: <code>{row['doc_a_id']}</code><br>
-                            <i style='color:#9ca3af;'>Trích dẫn: {row['doc_a_citation']}</i>
-                            <p style='margin-top:5px; font-style:italic;'>"{row['doc_a_text']}"</p>
-                        </div>
-                        <div>
-                            <span style='color:#f87171; font-weight:600;'>Quy định pháp lý / SBV (B)</span>: <code>{row['doc_b_id']}</code><br>
-                            <i style='color:#9ca3af;'>Trích dẫn: {row['doc_b_citation']}</i>
-                            <p style='margin-top:5px; font-style:italic;'>"{row['doc_b_text']}"</p>
-                        </div>
-                    </div>
-                    
-                    <div style='margin-top:15px; background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; border-left:4px solid #d97706;'>
-                        <strong>Phân tích của Trợ lý AI Compliance:</strong><br>
-                        {row['description']}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                    # AI Analysis Box
+                    st.markdown("💡 **Phân tích của Trợ lý AI Compliance:**")
+                    st.info(row['description'])
 
 # ================= TAB 2: UC4 — AI AUDIT CHECKLIST GENERATOR =================
 with tab2:
@@ -424,9 +433,9 @@ with tab2:
                 with col_cite:
                     # Popover for details / Citations (Streamlit 1.31+)
                     with st.popover("📖 Xem nguồn gốc"):
-                        st.markdown(f"**Trích dẫn nguồn gốc:**\n`{row['source_citation']}`")
-                        st.markdown(f"**Trạng thái kiểm duyệt:**\n🚨 `{row['review_status']}`")
-                        st.markdown(f"**Mã checklist**: `{row['item_id']}`")
+                        st.markdown(f"**Trích dẫn nguồn gốc:**\n{clean_citation(row['source_citation'])}")
+                        st.markdown(f"**Trạng thái kiểm duyệt:**\n🚨 {row['review_status']}")
+                        st.markdown(f"**Mã checklist**: {row['item_id']}")
                         
                 st.markdown("<hr style='margin: 10px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
 
