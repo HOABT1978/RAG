@@ -140,10 +140,59 @@ conflicts_csv_path = os.path.join(script_dir, 'outputs', 'compliance_conflicts.c
 conflicts_report_path = os.path.join(script_dir, 'outputs', 'compliance_conflict_report.md')
 checklist_csv_path = os.path.join(script_dir, 'outputs', 'audit_checklist_results.csv')
 checklist_report_path = os.path.join(script_dir, 'outputs', 'audit_checklist_report.md')
+gap_csv_path = os.path.join(script_dir, 'outputs', 'compliance_gap_results.csv')
+gap_report_path = os.path.join(script_dir, 'outputs', 'compliance_gap_report.md')
 log_path = os.path.join(script_dir, 'outputs', 'audit_log.jsonl')
+
 
 # ----------------- SIDEBAR: CONFIGURATION & STATUS -----------------
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/e/e0/Logo_Agribank.svg", width=180)
+st.sidebar.markdown("---")
+st.sidebar.markdown("<h2 style='color: #d97706; font-size: 1.3em; margin-top:10px;'>⚙️ Cấu hình Hệ thống</h2>", unsafe_allow_html=True)
+
+# Select LLM Provider
+llm_provider = st.sidebar.selectbox(
+    "Chọn LLM Provider:",
+    options=["Ollama", "Gemini"],
+    index=0 if os.getenv("LLM_PROVIDER", "ollama").lower() == "ollama" else 1
+)
+
+# Set the environment variable dynamically
+os.environ["LLM_PROVIDER"] = llm_provider.lower()
+
+# Check if provider has changed, and if so clear cache to force re-init
+if "current_provider" not in st.session_state:
+    st.session_state.current_provider = llm_provider.lower()
+elif st.session_state.current_provider != llm_provider.lower():
+    st.session_state.current_provider = llm_provider.lower()
+    # Force re-instantiation of internal lookup system
+    if 'lookup_system' in st.session_state:
+        del st.session_state['lookup_system']
+
+# Check Ollama Server Status
+ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+ollama_online = False
+try:
+    import requests
+    # Try the configured URL first
+    res = requests.get(f"{ollama_url.rstrip('/')}/api/tags", timeout=1.0)
+    if res.status_code == 200:
+        ollama_online = True
+except Exception:
+    # If failed, try localhost fallback in case it's run on host
+    try:
+        res = requests.get("http://localhost:11434/api/tags", timeout=1.0)
+        if res.status_code == 200:
+            ollama_online = True
+    except Exception:
+        ollama_online = False
+
+if ollama_online:
+    st.sidebar.markdown("🟢 **Trạng thái Ollama Server**: Online")
+else:
+    st.sidebar.markdown("🔴 **Trạng thái Ollama Server**: Offline")
+
+st.sidebar.markdown("---")
 st.sidebar.markdown("<h2 style='color: #d97706; font-size: 1.3em; margin-top:10px;'>🔑 Xác thực người dùng (RBAC)</h2>", unsafe_allow_html=True)
 
 # User ID & Role Inputs
@@ -209,8 +258,8 @@ if st.sidebar.button("🧹 Xóa vết nhật ký (Clean Log)", use_container_wid
         st.sidebar.info("Không có tệp nhật ký để xóa.")
 
 # ----------------- MAIN TITLE & DISCLAIMER BANNER -----------------
-st.markdown("<h1 class='header-title'>🛡️ AI COMPLIANCE & AUDIT ASSISTANT</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #9ca3af; font-size:1.1em;'>Hệ thống Trợ lý Kiểm soát Tuân thủ & Sinh Bản nháp Checklist Kiểm toán Agribank</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='header-title'>🛡️ AGRIBANK LOCAL AI SYSTEM - RAG BẢO MẬT & KIỂM TOÁN</h1>", unsafe_allow_html=True)
+st.markdown(f"<p style='color: #9ca3af; font-size:1.1em; font-weight:600;'>Hệ thống: {os.getenv('APP_ENV', 'training').upper()} | Vai trò: {user_role} | Provider: {llm_provider.upper()}</p>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class='banner-warning'>
@@ -218,15 +267,217 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Helper to map gap domains in UC2
+def get_gap_domain(doc_id):
+    if not isinstance(doc_id, str):
+        return "Khác"
+    doc_id = doc_id.lower()
+    if 'car' in doc_id:
+        return "CAR & Rủi ro"
+    elif 'at' in doc_id:
+        return "An toàn kho quỹ"
+    elif 'td' in doc_id:
+        return "Tín dụng"
+    elif 'hr' in doc_id:
+        return "Nhân sự"
+    elif 'bh' in doc_id:
+        return "Bảo hiểm"
+    elif 'it' in doc_id:
+        return "CNTT & AI"
+    return "Khác"
+
 # ----------------- TABS CREATION -----------------
-tab1, tab2, tab3 = st.tabs([
-    "🔍 UC3 — AI COMPLIANCE CHECKER", 
-    "📋 UC4 — AI AUDIT CHECKLIST GENERATOR", 
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "🔍 UC1 — TRA CỨU QUY ĐỊNH",
+    "⚖️ UC2 — COMPLIANCE GAP ANALYSIS",
+    "🛡️ UC3 — AI COMPLIANCE CHECKER",
+    "📋 UC4 — AI AUDIT CHECKLIST GENERATOR",
     "📜 AUDIT LOG & SYSTEM TRAIL"
 ])
 
-# ================= TAB 1: UC3 — AI COMPLIANCE CHECKER =================
+# ================= TAB 1: UC1 — INTERNAL LOOKUP =================
 with tab1:
+    st.markdown("### Tra cứu quy định nội bộ (Internal Lookup)")
+    st.markdown("Hệ thống tra cứu quy định nội bộ Agribank có lọc phân quyền RBAC và trích dẫn tài liệu gốc.")
+    
+    # Lazy initialize the lookup system
+    if 'lookup_system' not in st.session_state:
+        try:
+            from scripts.internal_lookup import InternalLookupSystem
+            st.session_state.lookup_system = InternalLookupSystem()
+        except Exception as e:
+            st.error(f"Không thể khởi tạo động cơ tra cứu: {e}")
+            
+    q_col1, q_col2 = st.columns([4, 1])
+    with q_col1:
+        question = st.text_input("Nhập câu hỏi cần tra cứu:", value="Hồ sơ đề nghị cấp Giấy phép lần đầu của quỹ tín dụng nhân dân cần danh sách nhân sự dự kiến bầu, bổ nhiệm gồm những ai?", key="uc1_question")
+    with q_col2:
+        top_k = st.slider("Số lượng tài liệu trích xuất (Top-K):", min_value=1, max_value=10, value=5, step=1)
+        
+    if st.button("🚀 Thực hiện Tra cứu", use_container_width=True):
+        if not question.strip():
+            st.warning("Vui lòng nhập câu hỏi!")
+        else:
+            with st.spinner("Đang tra cứu cơ sở dữ liệu quy định và tổng hợp câu trả lời..."):
+                if 'lookup_system' in st.session_state and st.session_state.lookup_system:
+                    try:
+                        res = st.session_state.lookup_system.lookup(
+                            question=question,
+                            user_role=user_role,
+                            user_id=user_id_demo,
+                            top_k=top_k
+                        )
+                        st.session_state.uc1_result = res
+                        st.success("Hoàn thành tra cứu!")
+                    except Exception as e:
+                        st.error(f"Lỗi khi tra cứu: {e}")
+                else:
+                    st.error("Động cơ tra cứu chưa được khởi tạo thành công.")
+                    
+    # Display lookup result
+    if 'uc1_result' in st.session_state:
+        res = st.session_state.uc1_result
+        st.markdown("---")
+        st.markdown("#### Kết quả trả về:")
+        
+        # Display response
+        st.info(res['answer'])
+        
+        # Access Scope & Request ID
+        col_meta1, col_meta2 = st.columns(2)
+        with col_meta1:
+            st.markdown(f"**Phạm vi truy cập (Access Scope):** `{res['access_scope']}`")
+        with col_meta2:
+            st.markdown(f"**Mã kiểm toán (Request ID):** `{res['request_id']}`")
+            
+        # Display Citations in Expander
+        if res.get('citations'):
+            with st.expander("📖 Xem tài liệu tham chiếu (Citations)"):
+                for cite in res['citations']:
+                    st.markdown(f"- `{clean_citation(cite)}`")
+                    
+        # Display Chunk IDs in Expander
+        if res.get('document_id/chunk_id'):
+            with st.expander("🔗 Xem mã phân đoạn (Document/Chunk IDs)"):
+                for dc in res['document_id/chunk_id']:
+                    st.markdown(f"- `{dc}`")
+
+# ================= TAB 2: UC2 — COMPLIANCE GAP ANALYSIS =================
+with tab2:
+    st.markdown("### Phân tích chênh lệch tuân thủ (Compliance Gap Analysis)")
+    st.markdown("Phát hiện khoảng trống và sự chênh lệch giữa quy định của Ngân hàng Nhà nước và quy trình nội bộ Agribank.")
+    
+    col_gap1, col_gap2 = st.columns([3, 1])
+    with col_gap1:
+        gap_domain_filter = st.selectbox(
+            "Lọc theo Miền nghiệp vụ (Gap):",
+            options=["Tất cả", "An toàn kho quỹ", "CAR & Rủi ro", "Tín dụng", "Bảo hiểm", "CNTT & AI"]
+        )
+    with col_gap2:
+        gap_class_filter = st.selectbox(
+            "Lọc theo Phân loại tuân thủ:",
+            options=["Tất cả", "DAP_UNG", "THIEU", "CHENH_LECH", "CHUA_DU_BANG_CHUNG"]
+        )
+        
+    if st.button("⚖️ Chạy Phân Tích Chênh Lệch Tuân Thủ (Toàn bộ)", use_container_width=True):
+        with st.spinner("Động cơ Compliance Gap đang thực hiện đối chiếu quy định..."):
+            try:
+                # Call compliance gap python script
+                py_exec = sys.executable
+                script_path = os.path.join(scripts_dir, 'compliance_gap.py')
+                res = subprocess.run([py_exec, script_path], capture_output=True, text=True, encoding='utf-8')
+                if res.returncode == 0:
+                    st.success("Hoàn thành phân tích chênh lệch tuân thủ!")
+                else:
+                    st.error(f"Lỗi khi thực thi: {res.stderr}")
+            except Exception as e:
+                st.error(f"Lỗi hệ thống: {e}")
+                
+    st.markdown("---")
+    st.markdown("#### Bảng kết quả phân tích chênh lệch:")
+    
+    if not os.path.exists(gap_csv_path):
+        st.warning("⚠️ Chưa có dữ liệu chênh lệch tuân thủ. Vui lòng bấm nút 'Chạy Phân Tích Chênh Lệch Tuân Thủ' ở trên.")
+    else:
+        df_gap = pd.read_csv(gap_csv_path)
+        
+        # Apply filters
+        df_gap['inferred_domain'] = df_gap['internal_document_id'].apply(get_gap_domain)
+        if gap_domain_filter != "Tất cả":
+            df_gap = df_gap[df_gap['inferred_domain'] == gap_domain_filter]
+        if gap_class_filter != "Tất cả":
+            df_gap = df_gap[df_gap['classification'] == gap_class_filter]
+            
+        if df_gap.empty:
+            st.info("Không phát hiện chênh lệch tuân thủ nào phù hợp với bộ lọc hiện tại.")
+        else:
+            # Action: Download Buttons
+            col_gap_d1, col_gap_d2 = st.columns([1, 4])
+            with col_gap_d1:
+                # Download CSV
+                gap_csv_data = df_gap.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Tải Gap CSV",
+                    data=gap_csv_data,
+                    file_name="compliance_gap_results.csv",
+                    mime="text/csv",
+                    key="download_gap_csv",
+                    use_container_width=True
+                )
+            with col_gap_d2:
+                # Download Markdown report if exists
+                if os.path.exists(gap_report_path):
+                    with open(gap_report_path, 'r', encoding='utf-8') as f:
+                        gap_md_data = f.read()
+                    st.download_button(
+                        label="📥 Tải báo cáo phân tích đầy đủ (Markdown)",
+                        data=gap_md_data.encode('utf-8'),
+                        file_name="compliance_gap_report.md",
+                        mime="text/markdown",
+                        key="download_gap_md"
+                    )
+                    
+            # Render each gap finding in a container
+            for idx, row in df_gap.iterrows():
+                with st.container(border=True):
+                    g_col1, g_col2 = st.columns([3, 1])
+                    with g_col1:
+                        st.subheader(f"⚖️ Phát hiện: {row['gap_id']}")
+                    with g_col2:
+                        cls = str(row['classification']).upper()
+                        if cls == 'DAP_UNG':
+                            st.success("🟢 ĐÁP ỨNG")
+                        elif cls == 'THIEU':
+                            st.error("🔴 THIẾU")
+                        elif cls == 'CHENH_LECH':
+                            st.warning("🟡 CHÊNH LỆCH")
+                        else:
+                            st.info("⚪ CHƯA ĐỦ BẰNG CHỨNG")
+                            
+                    st.markdown(f"**Miền nghiệp vụ:** `{row['inferred_domain']}` | **Độ tin cậy:** `{row['confidence']:.2f}` | **Trạng thái:** `{row['review_status']}`")
+                    st.divider()
+                    
+                    # Columns External & Internal for comparison
+                    col_ext, col_int = st.columns(2)
+                    with col_ext:
+                        st.markdown(f"🛑 **Quy định pháp lý / NHNN**: `{row['external_document_id']}`")
+                        st.caption(f"Trích dẫn: {clean_citation(row['external_citation'])}")
+                        st.markdown(f"*{row['external_requirement']}*")
+                        
+                    with col_int:
+                        st.markdown(f"🟢 **Quy trình nội bộ Agribank**: `{row['internal_document_id']}`")
+                        st.caption(f"Trích dẫn: {clean_citation(row['internal_citation']) if isinstance(row['internal_citation'], str) else 'N/A'}")
+                        st.markdown(f"*{row['internal_evidence'] if isinstance(row['internal_evidence'], str) else 'Chưa có quy định nội bộ.'}*")
+                        
+                    st.divider()
+                    
+                    # AI Analysis Box
+                    st.markdown("💡 **Phân tích chi tiết chênh lệch:**")
+                    st.info(row['reason'])
+                    st.caption(f"Request ID: `{row['request_id']}`")
+
+# ================= TAB 3: UC3 — AI COMPLIANCE CHECKER =================
+with tab3:
     st.markdown("### Kiểm tra mâu thuẫn & So sánh chéo quy định")
     st.markdown("Đối chiếu các Quy định/Quy chế nội bộ Agribank với nhau hoặc với các Thông tư của Ngân hàng Nhà nước.")
     
@@ -335,9 +586,9 @@ with tab1:
                     st.markdown("💡 **Phân tích của Trợ lý AI Compliance:**")
                     st.info(row['description'])
 
-# ================= TAB 2: UC4 — AI AUDIT CHECKLIST GENERATOR =================
-with tab2:
-    st.markdown("### Thiết lập bản nháp Checklist Kiểm toán bằng AI")
+# ================= TAB 4: UC4 — AI AUDIT CHECKLIST GENERATOR =================
+with tab4:
+    st.markdown("### Thiết lập Checklist Kiểm toán bằng AI")
     st.markdown("Chọn phạm vi miền nghiệp vụ và cấp độ chi nhánh để AI trích xuất các câu hỏi kiểm soát bắt buộc dựa trên văn bản gốc.")
     
     col_c1, col_c2 = st.columns([1, 1])
@@ -352,7 +603,7 @@ with tab2:
             options=["Chi nhánh & Phòng giao dịch", "Chi nhánh", "Khối CNTT & AI", "Phòng Kế toán"]
         )
         
-    if st.button("📋 Tạo Bản Nháp Checklist Kiểm Toán", use_container_width=True):
+    if st.button("📋 Tạo Checklist Kiểm Toán", use_container_width=True):
         with st.spinner("Động cơ AI Audit đang phân tích và sinh danh sách checklist kiểm soát..."):
             try:
                 # Call audit checklist generator python script
@@ -360,7 +611,7 @@ with tab2:
                 script_path = os.path.join(scripts_dir, 'audit_checklist_gen.py')
                 res = subprocess.run([py_exec, script_path], capture_output=True, text=True, encoding='utf-8')
                 if res.returncode == 0:
-                    st.success("Tạo thành công bản nháp checklist kiểm toán!")
+                    st.success("Tạo thành công checklist kiểm toán!")
                 else:
                     st.error(f"Lỗi khi thực thi: {res.stderr}")
             except Exception as e:
@@ -370,7 +621,7 @@ with tab2:
     st.markdown("#### Bảng Checklist Kiểm toán đề xuất:")
     
     if not os.path.exists(checklist_csv_path):
-        st.warning("⚠️ Chưa có dữ liệu checklist. Vui lòng bấm nút 'Tạo Bản Nháp Checklist Kiểm Toán' ở trên.")
+        st.warning("⚠️ Chưa có dữ liệu checklist. Vui lòng bấm nút 'Tạo Checklist Kiểm Toán' ở trên.")
     else:
         df_check = pd.read_csv(checklist_csv_path)
         
@@ -439,8 +690,8 @@ with tab2:
                         
                 st.markdown("<hr style='margin: 10px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.05);'>", unsafe_allow_html=True)
 
-# ================= TAB 3: AUDIT LOG & SYSTEM TRAIL =================
-with tab3:
+# ================= TAB 5: AUDIT LOG & SYSTEM TRAIL =================
+with tab5:
     st.markdown("### Lịch sử vết ghi nhận hệ thống (Audit Trail & Logging)")
     st.markdown("Tất cả các hành động của kiểm toán viên và động cơ AI Compliance/Audit đều được ghi vết bảo mật.")
     

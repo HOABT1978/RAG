@@ -5,9 +5,7 @@ import io
 from google import genai
 from google.genai import types
 
-# Configure stdout/stderr for Vietnamese character support
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+# stdout/stderr wrapping moved to __main__ to avoid Streamlit import conflicts
 
 # Ensure we can import the adapter and logger
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -17,13 +15,25 @@ from audit_logger import AuditLogger
 class InternalLookupSystem:
     def __init__(self):
         # Initialize retriever and logger
-        self.adapter = SecureRetrievalAdapter()
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        secure_csv_path = os.path.abspath(os.path.join(script_dir, "..", "data", "chunks_combined_secure.csv"))
+        embeddings_json_path = os.path.abspath(os.path.join(script_dir, "..", "outputs", "mock_embeddings.json"))
+        
+        self.adapter = SecureRetrievalAdapter(
+            secure_csv_path=secure_csv_path,
+            embeddings_json_path=embeddings_json_path
+        )
         self.logger = AuditLogger()
         
-        # Initialize Gemini API client
+        # Initialize LLM Client
         self.api_key = os.getenv("GEMINI_API_KEY")
         self.model_name = os.getenv("LLM_MODEL", "gemini-2.5-flash")
-        self.client = genai.Client(api_key=self.api_key)
+        self.llm_provider = os.getenv("LLM_PROVIDER", "gemini").lower().strip()
+        if self.llm_provider == "ollama":
+            from ollama_adapter import OllamaClient
+            self.client = OllamaClient()
+        else:
+            self.client = genai.Client(api_key=self.api_key)
         
     def lookup(self, question, user_role, user_id="demo_user", top_k=5):
         # 1. Retrieve authorized chunks using the RBAC pre-filtering adapter
@@ -93,11 +103,14 @@ YÊU CẦU BẮT BUỘC:
         
         # 5. Call LLM for generation
         try:
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=prompt
-            )
-            answer = response.text.strip()
+            if self.llm_provider == "ollama":
+                answer = self.client.generate(prompt, format_json=False)
+            else:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt
+                )
+                answer = response.text.strip()
         except Exception as e:
             print(f"[ERROR] LLM generation failed: {e}")
             answer = "Không tìm thấy đủ thông tin trong phạm vi tài liệu được phép truy cập. (Lỗi xử lý ngôn ngữ)"
@@ -113,6 +126,9 @@ YÊU CẦU BẮT BUỘC:
         }
 
 if __name__ == "__main__":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
     print("=== INITIALIZING INTERNAL LOOKUP SYSTEM ===")
     system = InternalLookupSystem()
     

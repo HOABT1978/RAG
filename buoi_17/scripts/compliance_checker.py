@@ -32,6 +32,7 @@ env_path = os.path.abspath(os.path.join(script_dir, "..", ".env"))
 load_dotenv(env_path, override=True)
 gemini_key = os.getenv("GEMINI_API_KEY")
 llm_model = os.getenv("LLM_MODEL", "gemini-3.6-flash")
+llm_provider = os.getenv("LLM_PROVIDER", "gemini").lower().strip()
 
 print("=== STARTING COMPLIANCE CHECKER ENGINE ===")
 
@@ -146,10 +147,9 @@ for comp in comparisons:
             
             request_id = str(uuid.uuid4())
             
-            # Send to Gemini
+            # Send to LLM (Ollama or Gemini)
             if not api_failed:
                 try:
-                    client = genai.Client(api_key=gemini_key)
                     prompt = f"""
                     Compare the following two banking policy clauses and determine if there is any compliance conflict, overlap, discrepancy, or stricter internal standard.
 
@@ -168,18 +168,34 @@ for comp in comparisons:
                        - HIGH: Critical legal risk or major financial gap.
                        - MEDIUM: Operational process gap or control deficiency.
                        - LOW: Tighter internal safety buffer or procedural overlap.
+
+                    Return ONLY a JSON object with the following schema:
+                    {{
+                        "has_conflict": bool,
+                        "conflict_type": "Hạn mức/ngưỡng" | "Quy trình thực hiện" | "Thẩm quyền phê duyệt" | "Thời hạn xử lý" | null,
+                        "severity": "HIGH" | "MEDIUM" | "LOW" | null,
+                        "description": "Detailed explanation of the conflict or why it is not a conflict. In Vietnamese."
+                    }}
+                    Do not add any other text.
                     """
                     
-                    res = client.models.generate_content(
-                        model=llm_model,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            response_mime_type="application/json",
-                            response_schema=ComplianceConflictAnalysis
+                    if llm_provider == "ollama":
+                        from ollama_adapter import OllamaClient
+                        ollama_client = OllamaClient()
+                        res_text = ollama_client.generate(prompt, format_json=True)
+                    else:
+                        client = genai.Client(api_key=gemini_key)
+                        res = client.models.generate_content(
+                            model=llm_model,
+                            contents=prompt,
+                            config=types.GenerateContentConfig(
+                                response_mime_type="application/json",
+                                response_schema=ComplianceConflictAnalysis
+                            )
                         )
-                    )
+                        res_text = res.text.strip()
                     
-                    analysis = json.loads(res.text.strip())
+                    analysis = json.loads(res_text.strip())
                     
                     # Log event using AuditLogger
                     logger.log_event(

@@ -32,6 +32,7 @@ env_path = os.path.abspath(os.path.join(script_dir, "..", ".env"))
 load_dotenv(env_path, override=True)
 gemini_key = os.getenv("GEMINI_API_KEY")
 llm_model = os.getenv("LLM_MODEL", "gemini-3.6-flash")
+llm_provider = os.getenv("LLM_PROVIDER", "gemini").lower().strip()
 
 print("=== STARTING AUDIT CHECKLIST GENERATOR ENGINE ===")
 
@@ -159,7 +160,6 @@ for scenario in test_scenarios:
         
         if not api_failed:
             try:
-                client = genai.Client(api_key=gemini_key)
                 prompt = f"""
                 You are an expert internal auditor for Agribank.
                 Extract compliance checklist items based strictly on the following policy clause.
@@ -175,18 +175,37 @@ for scenario in test_scenarios:
                 3. A risk_level: HIGH, MEDIUM, or LOW based on the significance of the rule.
                 
                 Do not extrapolate. Keep it strictly focused on the text.
+                
+                Return ONLY a JSON object with the following schema:
+                {{
+                    "items": [
+                        {{
+                            "audit_question": "question string",
+                            "risk_description": "risk description string",
+                            "risk_level": "HIGH" | "MEDIUM" | "LOW"
+                        }}
+                    ]
+                }}
+                Do not add any other text.
                 """
                 
-                res = client.models.generate_content(
-                    model=llm_model,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        response_schema=AuditChecklistListSchema
+                if llm_provider == "ollama":
+                    from ollama_adapter import OllamaClient
+                    ollama_client = OllamaClient()
+                    res_text = ollama_client.generate(prompt, format_json=True)
+                else:
+                    client = genai.Client(api_key=gemini_key)
+                    res = client.models.generate_content(
+                        model=llm_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            response_schema=AuditChecklistListSchema
+                        )
                     )
-                )
+                    res_text = res.text.strip()
                 
-                data = json.loads(res.text.strip())
+                data = json.loads(res_text.strip())
                 items = data.get('items', [])
                 
                 for item in items:

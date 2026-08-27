@@ -4,10 +4,14 @@ import json
 import pandas as pd
 from pathlib import Path
 
-# Add buoi_15 to sys.path to enable imports of src.*
+# Add parent dir (buoi_17) or buoi_15 to sys.path to enable imports of src.*
+PARENT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 BUOI_15_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'buoi_15'))
+if PARENT_PATH not in sys.path:
+    sys.path.append(PARENT_PATH)
 if BUOI_15_PATH not in sys.path:
     sys.path.append(BUOI_15_PATH)
+
 
 from src.secure_retriever import SecureRetriever
 

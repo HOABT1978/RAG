@@ -142,10 +142,16 @@ fallback_responses = {
     }
 }
 
-# Initialize Gemini Client
+# Initialize LLM Client
 api_key = os.getenv("GEMINI_API_KEY")
 model_name = os.getenv("LLM_MODEL", "gemini-2.5-flash")
-client = genai.Client(api_key=api_key)
+llm_provider = os.getenv("LLM_PROVIDER", "gemini").lower().strip()
+
+if llm_provider == "ollama":
+    from ollama_adapter import OllamaClient
+    client = OllamaClient()
+else:
+    client = genai.Client(api_key=api_key)
 
 gap_results = []
 
@@ -206,11 +212,15 @@ Chú ý: Trả về duy nhất khối JSON sạch, không bọc trong ```json ha
     result_data = None
     
     try:
-        response = client.models.generate_content(
-            model=model_name,
-            contents=prompt
-        )
-        response_text = response.text.strip()
+        if llm_provider == "ollama":
+            response_text = client.generate(prompt, format_json=True)
+        else:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            response_text = response.text.strip()
+            
         # Strip code block markdown if present
         if response_text.startswith("```"):
             response_text = response_text.split("```")[1]
@@ -218,10 +228,17 @@ Chú ý: Trả về duy nhất khối JSON sạch, không bọc trong ```json ha
                 response_text = response_text[4:].strip()
                 
         result_data = json.loads(response_text)
-        print("LLM Response parsed successfully.")
-        llm_success = True
+        
+        # Verify required keys are present to guarantee safety before using it
+        required_keys = ['classification', 'internal_document_id', 'internal_chunk_id', 'internal_evidence', 'internal_citation', 'reason', 'confidence']
+        if all(k in result_data for k in required_keys):
+            print("LLM Response parsed successfully.")
+            llm_success = True
+        else:
+            print("[WARNING] LLM Response missing required keys. Using fallback.")
+            llm_success = False
     except Exception as e:
-        print(f"[WARNING] LLM Gap Analysis failed or key unauthenticated: {e}. Using high-quality fallback mapping.")
+        print(f"[WARNING] LLM Gap Analysis failed: {e}. Using high-quality fallback mapping.")
         
     # 3. Fallback to predefined high-quality mappings if LLM fails
     if not llm_success or result_data is None:

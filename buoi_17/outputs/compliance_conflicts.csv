@@ -1,3 +1,649 @@
 conflict_id,domain,doc_a_id,doc_a_citation,doc_a_text,doc_b_id,doc_b_citation,doc_b_text,conflict_type,description,severity,review_status,request_id
-CONFLICT_CAR_01,CAR & Rủi ro,agr_car02,[250/QĐ-NHNO-QLRR - Quy định nội bộ số 250/QĐ-NHNO-QLRR | Điều 5 | doc_agr_car02_01],"Tỷ lệ an toàn vốn tối thiểu (CAR) của Agribank được quy định duy trì ở mức tối thiểu 8.5%, cao hơn 0.5% so với quy định chung 8% tại Thông tư 41/2016/TT-NHNN. Bộ phận Quản lý Rủi ro chịu trách nhiệm tính toán CAR theo tháng và quý.",117310,"[41/2016/TT-NHNN - Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Điều 6. Tỷ lệ an toàn vốn | doc_117310_điều_6__tỷ_lệ_an_toàn_vốn_6]","Ngân hàng, chi nhánh ngân hàng nước ngoài phải duy trì tỷ lệ an toàn vốn tối thiểu 8% xác định trên cơ sở riêng lẻ và hợp nhất.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN (Điều 9) chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,f51cb2ce-1cc6-4210-8c85-fa32fbba05a2
-CONFLICT_KHO_02,An toàn kho quỹ,agr_at01,[100/QĐ-NHNO-AT - Quy định nội bộ số 100/QĐ-NHNO-AT | Điều 30 | doc_agr_at01_04],"Ban Quản lý kho tiền tại mỗi chi nhánh Agribank bao gồm 3 thành viên bắt buộc: Giám đốc (hoặc Phó Giám đốc ủy quyền), Kế toán trưởng (hoặc Phụ trách kế toán) và Thủ kho tiền. Mọi lần mở cửa gian kho tiền phải có mặt đầy đủ 3 thành viên.",44209,"[01/2014/TT-NHNN - Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá | Điều 63. Hội đồng kiểm kê, Hội đồng kiểm đếm, phân loại tiền kho tiền Trung ương | doc_44209_điều_63__hội_đồng_kiểm_kê__hội_đồng_kiểm_đếm__phân_loại_tiền_kho_tiền_trung_ương_63]","Hội đồng kiểm kê Quỹ dự trữ phát hành, tài sản quý, giấy tờ có giá tại kho tiền Trung ương gồm Cục trưởng, Trưởng phòng kế toán và thủ quỹ.",Quy trình thực hiện,"Quy định nội bộ Agribank (Điều 30) quy định thành phần Ban Quản lý kho tiền mở kho hàng ngày bao gồm Giám đốc, Kế toán trưởng và Thủ kho tiền. Trong khi đó, Thông tư 01/2014/TT-NHNN (Điều 63) quy định thành phần Hội đồng kiểm kê kho tiền bao gồm Cục trưởng, Trưởng phòng kế toán và thủ quỹ. Đây là sự chồng chéo/khác biệt về quy trình thực hiện thành viên mở/quản lý kho tiền.",LOW,NEEDS_HUMAN_REVIEW,1bc4caa3-9895-4707-8049-c9fa056664ad
+CONFLICT_KHO_01,An toàn kho quỹ,agr_at01,[100/QĐ-NHNO-AT - Quy định nội bộ số 100/QĐ-NHNO-AT | Điều 1 | doc_agr_at01_01],"Quy định này áp dụng đối với toàn bộ cán bộ công nhân viên thuộc chi nhánh, phòng giao dịch Agribank trong công tác giao nhận, kiểm đếm, bảo quản và vận chuyển tiền mặt, tài sản quý, giấy tờ có giá. Nghiêm cấm mọi hành vi mang chìa khóa kho tiền ra khỏi trụ sở làm việc.",44209,"[Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá | Chương V
+      KIỂM TRA, KIỂM KÊ, BÀN GIAO, XỬ LÝ THỪA THIẾU | Mục 1
+      KIỂM TRA, KIỂM KÊ, BÀN GIAO TIỀN MẶT, | Điều 61. Bàn giao tiền mặt, tài sản quý, giấy tờ có giá | doc_44209_điều_61__bàn_giao_tiền_mặt__tài_sản_quý__giấy_tờ_có_giá_61]","Văn bản: Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá (Số ký hiệu: 01/2014/TT-NHNN)
+Điều 61. Bàn giao tiền mặt, tài sản quý, giấy tờ có giá
+Điều 61. Bàn giao tiền mặt, tài sản quý, giấy tờ có giá
+Khi thay đổi một trong ba thành viên giữ chìa khóa cửa kho tiền (Giám đốc, Trưởng phòng Kế toán, thủ kho tiền) phải tiến hành bàn giao tiền mặt, tài sản quý, giấy tờ có giá. Tùy theo yêu cầu công việc, thời gian nghỉ, Giám đốc có thể quyết định bằng văn bản việc bàn giao từng phần hay toàn bộ tài sản.
+Người nhận phải trực tiếp xem xét, kiểm tra, kiểm đếm, không được ủy quyền cho người khác làm thay.",Quy trình thực hiện,"Quy định nội bộ Agribank quy định thành phần Ban Quản lý kho tiền mở kho hàng ngày bao gồm Giám đốc, Kế toán trưởng và Thủ kho tiền. Trong khi đó, Thông tư 01/2014/TT-NHNN quy định thành phần Hội đồng kiểm kê kho tiền gồm Cục trưởng, Trưởng phòng kế toán và thủ quỹ.",LOW,NEEDS_HUMAN_REVIEW,2014f548-c770-41c7-a4fc-12f7325dde05
+CONFLICT_KHO_02,An toàn kho quỹ,agr_at01,[100/QĐ-NHNO-AT - Quy định nội bộ số 100/QĐ-NHNO-AT | Điều 25 | doc_agr_at01_03],"Quy trình kiểm đếm và phân loại tiền không đủ tiêu chuẩn lưu thông tại Agribank phải thực hiện dưới camera giám sát 24/7. Tiền nghi giả phải lập biên bản thu giữ và niêm phong trong ngày, báo cáo Ngân hàng Nhà nước chi nhánh sở tại.",44209,"[Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá | Chương V
+      KIỂM TRA, KIỂM KÊ, BÀN GIAO, XỬ LÝ THỪA THIẾU | Mục 1
+      KIỂM TRA, KIỂM KÊ, BÀN GIAO TIỀN MẶT, | Điều 60. Phương pháp kiểm kê | doc_44209_điều_60__phương_pháp_kiểm_kê_60]","Văn bản: Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá (Số ký hiệu: 01/2014/TT-NHNN)
+Điều 60. Phương pháp kiểm kê
+Điều 60. Phương pháp kiểm kê
+1. Kiểm kê hiện vật các loại tiền mặt, tài sản quý, giấy tờ có giá để đảm bảo sự khớp đúng giữa tồn quỹ thực tế với số dư trên sổ kế toán và sổ quỹ (hoặc sổ theo dõi xuất nhập tài sản).
+2. Các thành viên tham gia kiểm kê phải trực tiếp kiểm đếm từng bó, túi, bao, hộp, thùng tiền nguyên niêm phong đối với tiền mặt, tài sản quý, giấy tờ có giá đã đóng gói theo quy định; xem xét tình trạng nguyên niêm phong bó, túi, bao, hộp, thùng tiền hoặc tài sản quý, giấy tờ có giá. Trường hợp có nghi vấn, phải mở ra kiểm đếm hiện vật bên trong hoặc kiểm đếm lại từng tờ (đối với tiền mặt). Phải ghi kết quả kiểm kê (chi tiết các loại tài sản theo số lượng, giá trị) vào sổ sách theo quy định. Đối chiếu tài sản thực tế đã kiểm kê (số lượng, giá trị) với số dư trên sổ sách của kế toán và thủ quỹ (hoặc thủ kho tiền); nếu có chênh lệch (thừa hoặc thiếu) thì phải lập biên bản và xử lý theo quy định tại Điều 64 Thông tư này.
+Việc kiểm kê tồn quỹ cuối ngày, đối với tiền chưa chẵn bó (túi) phải kiểm đếm tờ (miếng).
+3. Biên bản kiểm kê được thông qua công khai, các thành viên Hội đồng kiểm kê, thủ quỹ (hoặc thủ kho tiền) phải ký tên xác nhận. Giám đốc, Trưởng phòng Kế toán, thủ quỹ (hoặc thủ kho tiền) phải ký tên xác nhận số liệu trên sổ quỹ hoặc sổ kiểm kê (nếu có).",Quy trình thực hiện,"Quy định nội bộ Agribank quy định thành phần Ban Quản lý kho tiền mở kho hàng ngày bao gồm Giám đốc, Kế toán trưởng và Thủ kho tiền. Trong khi đó, Thông tư 01/2014/TT-NHNN quy định thành phần Hội đồng kiểm kê kho tiền gồm Cục trưởng, Trưởng phòng kế toán và thủ quỹ.",LOW,NEEDS_HUMAN_REVIEW,4aeed5f4-a2bb-4453-865a-c8b9a61cc31b
+CONFLICT_KHO_03,An toàn kho quỹ,agr_at01,[100/QĐ-NHNO-AT - Quy định nội bộ số 100/QĐ-NHNO-AT | Điều 30 | doc_agr_at01_04],"Ban Quản lý kho tiền tại mỗi chi nhánh Agribank bao gồm 3 thành viên bắt buộc: Giám đốc (hoặc Phó Giám đốc ủy quyền), Kế toán trưởng (hoặc Phụ trách kế toán) và Thủ kho tiền. Mọi lần mở cửa gian kho tiền phải có mặt đầy đủ 3 thành viên.",44209,"[Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá | Chương III
+      BẢO QUẢN TIỀN MẶT, TÀI SẢN QUÝ, GIẤY TỜ CÓ GIÁ | Mục 4
+      VÀO, RA KHO TIỀN | Điều 41. Quy định vào, ra kho tiền | doc_44209_điều_41__quy_định_vào__ra_kho_tiền_41]","Văn bản: Thông tư số 01/2014/TT-NHNN Quy định về giao nhận, bảo quản, vận chuyển tiền mặt, tài sản quý, giấy tờ có giá (Số ký hiệu: 01/2014/TT-NHNN)
+Điều 41. Quy định vào, ra kho tiền
+Điều 41. Quy định vào, ra kho tiền
+1. Khi vào, thủ kho tiền vào đầu tiên; khi ra, thủ kho tiền ra cuối cùng. Việc mở và đóng các ô khóa cửa kho tiền theo nguyên tắc từng người một và theo đúng thứ tự, khi mở cửa kho tiền: Giám đốc, Trưởng phòng Kế toán, thủ kho tiền; ngược lại, khi đóng cửa kho tiền: thủ kho tiền, Trưởng phòng Kế toán, Giám đốc. Mỗi lần vào, ra kho tiền mọi người phải ký tên xác nhận trên sổ đăng ký vào kho tiền.
+2. Trước khi vào và sau khi ra khỏi kho tiền, các thành viên vào kho tiền phải có mặt đầy đủ tại gian đệm để chứng kiến các thành viên giữ chìa khóa kho tiền mở, đóng cửa kho tiền. Các thành viên giữ chìa khóa kho tiền phải tự bảo vệ bí mật mã số, chìa khóa cửa kho tiền khi mở, đóng cửa kho tiền.",Quy trình thực hiện,"Quy định nội bộ Agribank quy định thành phần Ban Quản lý kho tiền mở kho hàng ngày bao gồm Giám đốc, Kế toán trưởng và Thủ kho tiền. Trong khi đó, Thông tư 01/2014/TT-NHNN quy định thành phần Hội đồng kiểm kê kho tiền gồm Cục trưởng, Trưởng phòng kế toán và thủ quỹ.",LOW,NEEDS_HUMAN_REVIEW,53e47dfa-8c63-44f0-b5ac-2c44d47a490e
+CONFLICT_CAR_01,CAR & Rủi ro,agr_car02,[250/QĐ-NHNO-QLRR - Quy định nội bộ số 250/QĐ-NHNO-QLRR | Điều 5 | doc_agr_car02_01],"Tỷ lệ an toàn vốn tối thiểu (CAR) của Agribank được quy định duy trì ở mức tối thiểu 8.5%, cao hơn 0.5% so với quy định chung 8% tại Thông tư 41/2016/TT-NHNN. Bộ phận Quản lý Rủi ro chịu trách nhiệm tính toán CAR theo tháng và quý.",117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương III | Mục 5 | Điều 21. Trách nhiệm của Cơ quan Thanh tra, giám sát ngân hàng | doc_117310_điều_21__trách_nhiệm_của_cơ_quan_thanh_tra__giám_sát_ngân_hàng_21]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 21. Trách nhiệm của Cơ quan Thanh tra, giám sát ngân hàng
+Điều 21. Trách nhiệm của Cơ quan Thanh tra, giám sát ngân hàng
+1. Giám sát, kiểm tra, thanh tra đối với ngân hàng, chi nhánh ngân hàng nước ngoài; hướng dẫn, phối hợp với Ngân hàng Nhà nước chi nhánh tỉnh, thành phố trực thuộc Trung ương nơi không có Cục Thanh tra, giám sát ngân hàng thực hiện kiểm tra, thanh tra, giám sát đối với các ngân hàng, chi nhánh ngân hàng nước ngoài trên địa bàn trong việc chấp hành quy định tại Thông tư này.
+2. Chủ trì, phối hợp với các Vụ, Cục liên quan trình Thống đốc Ngân hàng Nhà nước áp dụng tỷ lệ an toàn vốn tối thiểu cao hơn 8% theo quy định tại Điều 6 Thông tư này.
+3. Phối hợp với Vụ Dự báo, thống kê xây dựng các biểu mẫu báo cáo tỷ lệ an toàn vốn ban hành theo quy định của Ngân hàng Nhà nước về chế độ báo cáo thống kê.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,5ac566aa-b54a-4541-b779-6b7e9f67cbde
+CONFLICT_CAR_02,CAR & Rủi ro,agr_car02,[250/QĐ-NHNO-QLRR - Quy định nội bộ số 250/QĐ-NHNO-QLRR | Điều 18 | doc_agr_car02_02],Trọng số rủi ro đối với tài sản có là khoản vay bất động sản kinh doanh áp dụng mức 150% đến 200% tùy theo tỷ lệ LTV. Các khoản vay nông nghiệp nông thôn được ưu đãi hệ số rủi ro 50% theo định hướng phát triển của Agribank.,117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương II | Mục 2 | Điều 8. Tài sản tính theo rủi ro tín dụng | doc_117310_điều_8__tài_sản_tính_theo_rủi_ro_tín_dụng_8]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 8. Tài sản tính theo rủi ro tín dụng
+Điều 8. Tài sản tính theo rủi ro tín dụng
+1. Tổng tài sản tính theo rủi ro tín dụng (RWA) bao gồm tổng tài sản tính theo rủi ro tín dụng (RWACR) và tổng tài sản tính theo rủi ro tín dụng đối tác (RWACCR) được tính theo công thức:
+RWA = RWACR + RWACCR
+Trong đó:
+- RWACR : Tổng tài sản tính theo rủi ro tín dụng;
+- RWACCR: Tổng tài sản tính theo rủi ro tín dụng đối tác.
+2. Tổng tài sản tính theo rủi ro tín dụng (RWACR ) là tổng các tài sản trên Bảng cân đối kế toán được tính theo công thức sau đây:
+RWACR = ∑Ej x CRWj + ∑Max {0, (Ei* - SPi)} x CRWi
+Trong đó:
+- Ej: Giá trị tài sản (không phải là khoản phải đòi) thứ j;
+- CRWj: Hệ số rủi ro tín dụng của tài sản thứ j theo quy định tại Điều 9 Thông tư này;
+- Ei*: Giá trị số dư của khoản phải đòi thứ i (Ei) được xác định theo khoản 3 Điều này, sau khi điều chỉnh giảm theo các biện pháp giảm thiểu rủi ro tín dụng quy định tại Điều 12, Điều 13, Điều 14 và Điều 15 Thông tư này;
+- SPi: Dự phòng cụ thể của khoản phải đòi thứ i;
+- CRWi: Hệ số rủi ro tín dụng của khoản phải đòi thứ i theo quy định tại Điều 9 Thông tư này.
+3. Giá trị số dư của khoản phải đòi (bao gồm cả số dư gốc và lãi, phí nếu có) của ngân hàng, chi nhánh ngân hàng nước ngoài được tính theo công thức:
+Ei = Eoni + Eoffi x CCFi
+Trong đó:
+- Ei: Giá trị số dư xác định theo nguyên giá của khoản phải đòi thứ i;
+- Eoni: Số dư phần nội bảng của khoản phải đòi thứ i;
+- Eoffi: Số dư phần ngoại bảng của khoản phải đòi thứ i;
+- CCFi: Hệ số chuyển đổi của phần ngoại bảng của khoản phải đòi thứ i theo quy định tại Điều 10 Thông tư này.
+4. Tài sản tính theo rủi ro tín dụng đối tác (RWACCR) được tính đối với:
+a) Giao dịch tự doanh;
+b) Giao dịch repo và giao dịch reverse repo;
+c) Giao dịch sản phẩm phái sinh để phòng ngừa rủi ro;
+d) Giao dịch mua bán ngoại tệ, tài sản tài chính với mục đích phục vụ nhu cầu của khách hàng, đối tác quy định tại mục d khoản 32 Điều 2 Thông tư này.
+5. Các giao dịch đã tính rủi ro tín dụng đối tác không phải tính rủi ro tín dụng khi tính tỷ lệ an toàn vốn. Tài sản tính theo rủi ro tín dụng đối tác (RWACCR) được tính theo hướng dẫn tại Phụ lục 2 ban hành kèm theo Thông tư này.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,b33495b7-3242-4611-8d9b-34f98b411608
+CONFLICT_CAR_03,CAR & Rủi ro,agr_car02,[250/QĐ-NHNO-QLRR - Quy định nội bộ số 250/QĐ-NHNO-QLRR | Điều 32 | doc_agr_car02_03],"Định kỳ trước ngày 15 hàng tháng, Agribank trích nộp đầy đủ phí trích nộp Quỹ bảo đảm an toàn hệ thống theo tỷ lệ 0.05% trên tổng dư nợ cho vay theo hướng dẫn nghiệp vụ Quỹ an toàn hệ thống.",117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương II | Mục 2 | Điều 9. Hệ số rủi ro tín dụng (CRW) | doc_117310_điều_9__hệ_số_rủi_ro_tín_dụng__crw_9]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+1. Ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện phân loại tài sản theo quy định tại Điều này và hướng dẫn tại Phụ lục 6 để áp dụng hệ số rủi ro tín dụng.
+Khi tính tỷ lệ an toàn vốn hợp nhất, ngân hàng được áp dụng hệ số rủi ro theo quy định tại nước sở tại đối với các khoản phải đòi của công ty con, công ty liên kết, chi nhánh của ngân hàng tại nước ngoài.
+2. Đối với tài sản là tiền mặt, vàng và các khoản tương đương tiền mặt của ngân hàng, chi nhánh ngân hàng nước ngoài, hệ số rủi ro tín dụng là 0%.
+3. Đối với tài sản là khoản phải đòi Chính phủ Việt Nam, Ngân hàng Nhà nước, Kho bạc Nhà nước, Ủy ban nhân dân tỉnh, thành phố trực thuộc Trung ương, các ngân hàng chính sách, hệ số rủi ro tín dụng là 0%. Đối với khoản phải đòi Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam (VAMC), Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam (DATC), hệ số rủi ro là 20%.
+4. Đối với tài sản là khoản phải đòi tổ chức tài chính quốc tế, hệ số rủi ro tín dụng là 0%.
+5. Đối với tài sản là khoản phải đòi chính phủ, ngân hàng Trung ương các nước, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến A-
+Từ BBB+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+0%
+20%
+50%
+100%
+150%
+6. Đối với tài sản là khoản phải đòi các tổ chức công lập của chính phủ (non-central government public sector entities (PSEs), chính quyền địa phương các nước, hệ số rủi ro tín dụng áp dụng theo hệ số rủi ro đối với khoản phải đòi chính phủ đó theo quy định tại khoản 5 Điều này.
+7. Đối với tài sản là khoản phải đòi tổ chức tài chính (bao gồm cả tổ chức tín dụng), hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với tổ chức tài chính nước ngoài (bao gồm cả tổ chức tín dụng nước ngoài) không phải là tổ chức tài chính quốc tế quy định tại khoản 20 Điều 2 Thông tư này, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+20%
+50%
+100%
+150%
+b) Đối với chi nhánh ngân hàng nước ngoài hoạt động tại Việt Nam áp dụng hệ số rủi ro tín dụng theo thứ hạng tín nhiệm của tổ chức tín dụng nước ngoài là ngân hàng mẹ.
+c) Đối với tài sản là các khoản phải đòi tổ chức tín dụng trong nước, trừ các khoản phải đòi dưới hình thức giao dịch reverse repo đã được tính rủi ro tín dụng đối tác theo quy định tại khoản 4 Điều 8 Thông tư này, hệ số rủi ro tín dụng áp dụng như sau:
+Thứ hạng tín nhiệm
+AAA đến AA-
+A+ đến BBB-
+BB+ đến BB-
+B+ đến B-
+Dưới B- và Không có xếp hạng
+Khoản phải đòi có thời hạn ban đầu từ 3 tháng trở lên
+20%
+50%
+80%
+100%
+150%
+Khoản phải đòi có thời hạn ban đầu dưới 3 tháng
+10%
+20%
+40%
+50%
+70%
+8. Đối với tài sản là các khoản mua, đầu tư nợ thứ cấp, chứng khoán nợ khác của ngân hàng, chi nhánh ngân hàng nước ngoài khác phát hành không bị trừ khỏi Vốn cấp 2 quy định tại mục 19 Phần I, điểm A, mục 21 Phần II điểm A, mục 13 điểm B Phụ lục 1 Thông tư này, hệ số rủi ro tín dụng áp dụng theo quy định tại điểm b và điểm c khoản 7 Điều này.
+9. Đối với tài sản là khoản phải đòi doanh nghiệp không phải là tổ chức tín dụng, chi nhánh ngân hàng nước ngoài, trừ các khoản phải đòi quy định tại khoản 10 Điều này, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với doanh nghiệp vừa và nhỏ được xác định theo quy định của pháp luật về trợ giúp phát triển doanh nghiệp vừa và nhỏ, hệ số rủi ro là 90%;
+b) Đối với các doanh nghiệp khác, ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu được xác định trên cơ sở số liệu Báo cáo tài chính năm (Báo cáo tài chính hợp nhất) được kiểm toán tại thời điểm gần nhất đối với các doanh nghiệp phải kiểm toán độc lập; Báo cáo tài chính năm (được kiểm toán, nếu có) nộp cho cơ quan thuế (có bằng chứng đã nộp cho cơ quan thuế) tại thời điểm gần nhất đối với doanh nghiệp không phải kiểm toán độc lập theo quy định của pháp luật như sau:
+- Doanh thu lấy số liệu trên Báo cáo kết quả hoạt động kinh doanh;
+- Tỷ lệ đòn bẩy = Tổng Nợ vay/Tổng tài sản; Trong đó:
+Tổng Nợ vay (total debt) được xác định bằng tổng của các khoản mục vay và nợ thuê tài chính ngắn hạn với khoản mục vay và nợ thuê tài chính dài hạn theo quy định hiện hành về kế toán.
+- Vốn chủ sở hữu lấy số liệu trên Bảng cân đối kế toán.
+(i) Hệ số rủi ro tín dụng áp dụng theo chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu của doanh nghiệp như sau:
+Doanh thu dưới 100 tỷ đồng
+Doanh thu từ 100 tỷ đồng đến dưới 400 tỷ đồng
+Doanh thu từ 400 tỷ đồng đến 1500 tỷ đồng
+Doanh thu trên 1500 tỷ đồng
+Tỷ lệ đòn bẩy dưới 25%
+100%
+80%
+60%
+50%
+Tỷ lệ đòn bẩy từ 25% đến 50%
+125%
+110%
+95%
+80%
+Tỷ lệ đòn bẩy trên 50%
+160%
+150%
+140%
+120%
+Vốn chủ sở hữu âm hoặc bằng 0
+250%
+(ii) Hệ số rủi ro tín dụng 200% được áp dụng đối với các doanh nghiệp không cung cấp Báo cáo tài chính cho ngân hàng, chi nhánh ngân hàng nước ngoài để tính các chỉ tiêu doanh thu, tỷ lệ đòn bảy, vốn chủ sở hữu; (iii) Đối với các doanh nghiệp thành lập mới (không bao gồm các trường hợp thành lập do tổ chức lại, chuyển đổi hình thức pháp lý,...), hoạt động chưa được 01 năm, hệ số rủi ro tín dụng là 150%.
+c) Đối với khoản cấp tín dụng chuyên biệt là khoản cấp tín dụng tài trợ dự án, tài trợ máy móc thiết bị và tài trợ hàng hóa, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp theo quy định tại điểm b khoản 9 Điều này.
+10. Đối với tài sản là khoản cho vay bảo đảm bằng bất động sản, hệ số rủi ro tín dụng áp dụng như sau:
+a) Ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định Tỷ lệ bảo đảm (viết tắt là LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản như sau:
+(i) Tỷ lệ bảo đảm (LTV) = Tổng số dư khoản phải đòi/Giá trị của tài sản bảo đảm. Trong đó:
+- Tổng số dư khoản phải đòi bao gồm tổng số dư (đã giải ngân và số dư chưa giải ngân) của khoản phải đòi và số dư (đã giải ngân và số dư chưa giải ngân) của các khoản phải đòi khác được bảo đảm bằng bất động sản đó tại ngân hàng, chi nhánh ngân hàng nước ngoài;
+- Giá trị của tài sản bảo đảm là giá trị của bất động sản bảo đảm cho các khoản phải đòi đó được xác định tại thời điểm xét duyệt cho vay.
+(ii) Tỷ lệ bảo đảm (LTV) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin giá trị của tài sản bảo đảm bị suy giảm trên 30% so với giá trị tại thời điểm xác định gần nhất.
+b) Hệ số rủi ro tín dụng áp dụng đối với khoản phải đòi được bảo đảm bằng bất động sản không kinh doanh theo chỉ tiêu Tỷ lệ bảo đảm (LTV) như sau:
+LTV
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến dưới 100%
+LTV từ 100% trở lên
+Hệ số rủi ro
+30%
+40%
+50%
+70%
+80%
+100%
+c) Đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh, hệ số rủi ro tín dụng áp dụng theo chỉ tiêu Tỷ lệ bảo đảm (LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh như sau:
+LTV dưới 60%
+LTV từ 60% trở lên đến dưới 75%
+LTV từ 75% trở lên
+Khoản phải đòi được đảm bảo bằng bất động sản kinh doanh
+75%
+100%
+120%
+d) Đối với khoản phải đòi được đảm bảo bằng bất động sản là hỗn hợp bất động sản kinh doanh và bất động sản không kinh doanh, hệ số rủi ro tín dụng được xác định riêng cho từng bất động sản kinh doanh và bất động sản không kinh doanh tương ứng theo tỷ lệ tổng diện tích mặt bằng của bất động sản;
+đ) Hệ số rủi ro tín dụng 150% được áp dụng đối với khoản phải đòi được đảm bảo bằng bất động sản mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV);
+e) Hệ số rủi ro tín dụng 200% được áp dụng đối với tài sản là khoản cấp tín dụng tài trợ dự án kinh doanh bất động sản.
+11. Đối với tài sản là khoản cho vay thế chấp nhà, ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện như sau:
+a) Xác định Tỷ lệ bảo đảm (LTV) theo quy định tại khoản 10 Điều này và Tỷ lệ thu nhập (viết tắt là DSC) đối với khoản cho vay thế chấp nhà như sau:
+(i) Tỷ lệ thu nhập (DSC) = Tổng số dư phải hoàn trả trong năm/Tổng thu nhập trong năm của khách hàng.
+Trong đó:
+- Tổng số dư phải hoàn trả trong năm bao gồm số dư nợ gốc và số dư nợ lãi;
+- Tổng thu nhập trong năm của khách hàng là thu nhập trong năm tính DSC của khách hàng sau khi đã trừ thuế thu nhập theo quy định và không bao gồm thu nhập từ việc cho thuê nhà hình thành từ khoản cho vay đó. Trường hợp, khách hàng cá nhân là đại diện ủy quyền cho hộ gia đình tham gia quan hệ vay vốn thì tổng thu nhập trong năm của khách hàng được xác định theo tổng thu nhập của các thành viên đồng trả nợ của hộ gia đình.
+(ii) Tỷ lệ thu nhập (DSC) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin thay đổi về tổng thu nhập của khách hàng.
+b) Hệ số rủi ro áp dụng cho khoản cho vay thế chấp nhà ở theo Tỷ lệ bảo đảm (LTV) và Tỷ lệ thu nhập (DSC) như sau:
+Các khoản cho vay thế chấp nhà ở
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến LTV từ 100% trở lên
+dưới 100%
+DSC từ 35% trở xuống
+25%
+30%
+40%
+50%
+60%
+80%
+DSC trên 35%
+30%
+40%
+50%
+70%
+80%
+100%
+c) Hệ số rủi ro tín dụng 200% được áp dụng đối với khoản cho vay thế chấp nhà mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV) và/hoặc Tỷ lệ thu nhập (DSC).
+12. Đối với tài sản là danh mục cấp tín dụng bán lẻ, hệ số rủi ro tín dụng là 75%.
+13. Đối với khoản nợ xấu, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với khoản nợ xấu có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu (trừ khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu), hệ số rủi ro tín dụng là 150%;
+b) Đối với khoản nợ xấu có dự phòng cụ thể từ 20% đến 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu, hệ số rủi ro tín dụng là 100%;
+c) Đối với khoản nợ xấu có dự phòng cụ thể lớn hơn 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà và có dự phòng cụ thể từ 20% giá trị của khoản nợ xấu trở lên, hệ số rủi ro tín dụng là 50%.
+14. Đối với tài sản là các khoản phải thu phát sinh từ việc bán nợ xấu (không bao gồm các khoản phải thu phát sinh trong quá trình bán nợ xấu cho Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam và Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam), hệ số rủi ro tín dụng là 200%.
+15. Đối với tài sản là công cụ vốn chủ sở hữu, mua cổ phiếu của doanh nghiệp (trừ các khoản đầu tư đã trừ khỏi vốn tự có quy định tại Phụ lục 1 kèm theo Thông tư này) và các khoản cho vay để đầu tư, kinh doanh chứng khoán, khoản cho vay giao dịch ký quỹ của công ty chứng khoán, hệ số rủi ro tín dụng là 150%.
+16. Đối với tài sản là các khoản cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp thuê tài chính theo quy định tại điểm b khoản 9 Điều này.
+17. Đối với tài sản là các khoản mua lại khoản phải thu có bảo lưu quyền truy đòi của công ty tài chính, công ty cho thuê tài chính theo quy định, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi đối với bên bán khoản phải thu.
+Đối với các khoản mua lại khoản phải thu của công ty tài chính, công ty cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi.
+18. Đối với các tài sản khác trên bảng cân đối kế toán trừ các tài sản quy định tại khoản 1, khoản 2, khoản 3, khoản 4, khoản 5, khoản 6, khoản 7, khoản 8, khoản 9, khoản 10, khoản 11, khoản 12, khoản 13, khoản 14, khoản 15, khoản 16 và khoản 17 Điều này, hệ số rủi ro tín dụng là 100%.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,3e7fc3d8-5975-4fba-9afb-c4e1133bf1f2
+CONFLICT_TD_01,Tín dụng,agr_td03,[315/QC-NHNO-TD - Quy chế tín dụng nội bộ số 315/QC-NHNO-TD | Điều 8 | doc_agr_td03_01],Thẩm quyền phán quyết tín dụng của Giám đốc Chi nhánh Agribank loại I là tối đa 30 tỷ đồng đối với khách hàng doanh nghiệp và 10 tỷ đồng đối với khách hàng cá nhân. Các khoản vay vượt thẩm quyền phải trình Hội đồng Thẩm định Tín dụng Trụ sở chính.,117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương II | Mục 2 | Điều 9. Hệ số rủi ro tín dụng (CRW) | doc_117310_điều_9__hệ_số_rủi_ro_tín_dụng__crw_9]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+1. Ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện phân loại tài sản theo quy định tại Điều này và hướng dẫn tại Phụ lục 6 để áp dụng hệ số rủi ro tín dụng.
+Khi tính tỷ lệ an toàn vốn hợp nhất, ngân hàng được áp dụng hệ số rủi ro theo quy định tại nước sở tại đối với các khoản phải đòi của công ty con, công ty liên kết, chi nhánh của ngân hàng tại nước ngoài.
+2. Đối với tài sản là tiền mặt, vàng và các khoản tương đương tiền mặt của ngân hàng, chi nhánh ngân hàng nước ngoài, hệ số rủi ro tín dụng là 0%.
+3. Đối với tài sản là khoản phải đòi Chính phủ Việt Nam, Ngân hàng Nhà nước, Kho bạc Nhà nước, Ủy ban nhân dân tỉnh, thành phố trực thuộc Trung ương, các ngân hàng chính sách, hệ số rủi ro tín dụng là 0%. Đối với khoản phải đòi Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam (VAMC), Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam (DATC), hệ số rủi ro là 20%.
+4. Đối với tài sản là khoản phải đòi tổ chức tài chính quốc tế, hệ số rủi ro tín dụng là 0%.
+5. Đối với tài sản là khoản phải đòi chính phủ, ngân hàng Trung ương các nước, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến A-
+Từ BBB+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+0%
+20%
+50%
+100%
+150%
+6. Đối với tài sản là khoản phải đòi các tổ chức công lập của chính phủ (non-central government public sector entities (PSEs), chính quyền địa phương các nước, hệ số rủi ro tín dụng áp dụng theo hệ số rủi ro đối với khoản phải đòi chính phủ đó theo quy định tại khoản 5 Điều này.
+7. Đối với tài sản là khoản phải đòi tổ chức tài chính (bao gồm cả tổ chức tín dụng), hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với tổ chức tài chính nước ngoài (bao gồm cả tổ chức tín dụng nước ngoài) không phải là tổ chức tài chính quốc tế quy định tại khoản 20 Điều 2 Thông tư này, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+20%
+50%
+100%
+150%
+b) Đối với chi nhánh ngân hàng nước ngoài hoạt động tại Việt Nam áp dụng hệ số rủi ro tín dụng theo thứ hạng tín nhiệm của tổ chức tín dụng nước ngoài là ngân hàng mẹ.
+c) Đối với tài sản là các khoản phải đòi tổ chức tín dụng trong nước, trừ các khoản phải đòi dưới hình thức giao dịch reverse repo đã được tính rủi ro tín dụng đối tác theo quy định tại khoản 4 Điều 8 Thông tư này, hệ số rủi ro tín dụng áp dụng như sau:
+Thứ hạng tín nhiệm
+AAA đến AA-
+A+ đến BBB-
+BB+ đến BB-
+B+ đến B-
+Dưới B- và Không có xếp hạng
+Khoản phải đòi có thời hạn ban đầu từ 3 tháng trở lên
+20%
+50%
+80%
+100%
+150%
+Khoản phải đòi có thời hạn ban đầu dưới 3 tháng
+10%
+20%
+40%
+50%
+70%
+8. Đối với tài sản là các khoản mua, đầu tư nợ thứ cấp, chứng khoán nợ khác của ngân hàng, chi nhánh ngân hàng nước ngoài khác phát hành không bị trừ khỏi Vốn cấp 2 quy định tại mục 19 Phần I, điểm A, mục 21 Phần II điểm A, mục 13 điểm B Phụ lục 1 Thông tư này, hệ số rủi ro tín dụng áp dụng theo quy định tại điểm b và điểm c khoản 7 Điều này.
+9. Đối với tài sản là khoản phải đòi doanh nghiệp không phải là tổ chức tín dụng, chi nhánh ngân hàng nước ngoài, trừ các khoản phải đòi quy định tại khoản 10 Điều này, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với doanh nghiệp vừa và nhỏ được xác định theo quy định của pháp luật về trợ giúp phát triển doanh nghiệp vừa và nhỏ, hệ số rủi ro là 90%;
+b) Đối với các doanh nghiệp khác, ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu được xác định trên cơ sở số liệu Báo cáo tài chính năm (Báo cáo tài chính hợp nhất) được kiểm toán tại thời điểm gần nhất đối với các doanh nghiệp phải kiểm toán độc lập; Báo cáo tài chính năm (được kiểm toán, nếu có) nộp cho cơ quan thuế (có bằng chứng đã nộp cho cơ quan thuế) tại thời điểm gần nhất đối với doanh nghiệp không phải kiểm toán độc lập theo quy định của pháp luật như sau:
+- Doanh thu lấy số liệu trên Báo cáo kết quả hoạt động kinh doanh;
+- Tỷ lệ đòn bẩy = Tổng Nợ vay/Tổng tài sản; Trong đó:
+Tổng Nợ vay (total debt) được xác định bằng tổng của các khoản mục vay và nợ thuê tài chính ngắn hạn với khoản mục vay và nợ thuê tài chính dài hạn theo quy định hiện hành về kế toán.
+- Vốn chủ sở hữu lấy số liệu trên Bảng cân đối kế toán.
+(i) Hệ số rủi ro tín dụng áp dụng theo chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu của doanh nghiệp như sau:
+Doanh thu dưới 100 tỷ đồng
+Doanh thu từ 100 tỷ đồng đến dưới 400 tỷ đồng
+Doanh thu từ 400 tỷ đồng đến 1500 tỷ đồng
+Doanh thu trên 1500 tỷ đồng
+Tỷ lệ đòn bẩy dưới 25%
+100%
+80%
+60%
+50%
+Tỷ lệ đòn bẩy từ 25% đến 50%
+125%
+110%
+95%
+80%
+Tỷ lệ đòn bẩy trên 50%
+160%
+150%
+140%
+120%
+Vốn chủ sở hữu âm hoặc bằng 0
+250%
+(ii) Hệ số rủi ro tín dụng 200% được áp dụng đối với các doanh nghiệp không cung cấp Báo cáo tài chính cho ngân hàng, chi nhánh ngân hàng nước ngoài để tính các chỉ tiêu doanh thu, tỷ lệ đòn bảy, vốn chủ sở hữu; (iii) Đối với các doanh nghiệp thành lập mới (không bao gồm các trường hợp thành lập do tổ chức lại, chuyển đổi hình thức pháp lý,...), hoạt động chưa được 01 năm, hệ số rủi ro tín dụng là 150%.
+c) Đối với khoản cấp tín dụng chuyên biệt là khoản cấp tín dụng tài trợ dự án, tài trợ máy móc thiết bị và tài trợ hàng hóa, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp theo quy định tại điểm b khoản 9 Điều này.
+10. Đối với tài sản là khoản cho vay bảo đảm bằng bất động sản, hệ số rủi ro tín dụng áp dụng như sau:
+a) Ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định Tỷ lệ bảo đảm (viết tắt là LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản như sau:
+(i) Tỷ lệ bảo đảm (LTV) = Tổng số dư khoản phải đòi/Giá trị của tài sản bảo đảm. Trong đó:
+- Tổng số dư khoản phải đòi bao gồm tổng số dư (đã giải ngân và số dư chưa giải ngân) của khoản phải đòi và số dư (đã giải ngân và số dư chưa giải ngân) của các khoản phải đòi khác được bảo đảm bằng bất động sản đó tại ngân hàng, chi nhánh ngân hàng nước ngoài;
+- Giá trị của tài sản bảo đảm là giá trị của bất động sản bảo đảm cho các khoản phải đòi đó được xác định tại thời điểm xét duyệt cho vay.
+(ii) Tỷ lệ bảo đảm (LTV) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin giá trị của tài sản bảo đảm bị suy giảm trên 30% so với giá trị tại thời điểm xác định gần nhất.
+b) Hệ số rủi ro tín dụng áp dụng đối với khoản phải đòi được bảo đảm bằng bất động sản không kinh doanh theo chỉ tiêu Tỷ lệ bảo đảm (LTV) như sau:
+LTV
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến dưới 100%
+LTV từ 100% trở lên
+Hệ số rủi ro
+30%
+40%
+50%
+70%
+80%
+100%
+c) Đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh, hệ số rủi ro tín dụng áp dụng theo chỉ tiêu Tỷ lệ bảo đảm (LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh như sau:
+LTV dưới 60%
+LTV từ 60% trở lên đến dưới 75%
+LTV từ 75% trở lên
+Khoản phải đòi được đảm bảo bằng bất động sản kinh doanh
+75%
+100%
+120%
+d) Đối với khoản phải đòi được đảm bảo bằng bất động sản là hỗn hợp bất động sản kinh doanh và bất động sản không kinh doanh, hệ số rủi ro tín dụng được xác định riêng cho từng bất động sản kinh doanh và bất động sản không kinh doanh tương ứng theo tỷ lệ tổng diện tích mặt bằng của bất động sản;
+đ) Hệ số rủi ro tín dụng 150% được áp dụng đối với khoản phải đòi được đảm bảo bằng bất động sản mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV);
+e) Hệ số rủi ro tín dụng 200% được áp dụng đối với tài sản là khoản cấp tín dụng tài trợ dự án kinh doanh bất động sản.
+11. Đối với tài sản là khoản cho vay thế chấp nhà, ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện như sau:
+a) Xác định Tỷ lệ bảo đảm (LTV) theo quy định tại khoản 10 Điều này và Tỷ lệ thu nhập (viết tắt là DSC) đối với khoản cho vay thế chấp nhà như sau:
+(i) Tỷ lệ thu nhập (DSC) = Tổng số dư phải hoàn trả trong năm/Tổng thu nhập trong năm của khách hàng.
+Trong đó:
+- Tổng số dư phải hoàn trả trong năm bao gồm số dư nợ gốc và số dư nợ lãi;
+- Tổng thu nhập trong năm của khách hàng là thu nhập trong năm tính DSC của khách hàng sau khi đã trừ thuế thu nhập theo quy định và không bao gồm thu nhập từ việc cho thuê nhà hình thành từ khoản cho vay đó. Trường hợp, khách hàng cá nhân là đại diện ủy quyền cho hộ gia đình tham gia quan hệ vay vốn thì tổng thu nhập trong năm của khách hàng được xác định theo tổng thu nhập của các thành viên đồng trả nợ của hộ gia đình.
+(ii) Tỷ lệ thu nhập (DSC) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin thay đổi về tổng thu nhập của khách hàng.
+b) Hệ số rủi ro áp dụng cho khoản cho vay thế chấp nhà ở theo Tỷ lệ bảo đảm (LTV) và Tỷ lệ thu nhập (DSC) như sau:
+Các khoản cho vay thế chấp nhà ở
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến LTV từ 100% trở lên
+dưới 100%
+DSC từ 35% trở xuống
+25%
+30%
+40%
+50%
+60%
+80%
+DSC trên 35%
+30%
+40%
+50%
+70%
+80%
+100%
+c) Hệ số rủi ro tín dụng 200% được áp dụng đối với khoản cho vay thế chấp nhà mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV) và/hoặc Tỷ lệ thu nhập (DSC).
+12. Đối với tài sản là danh mục cấp tín dụng bán lẻ, hệ số rủi ro tín dụng là 75%.
+13. Đối với khoản nợ xấu, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với khoản nợ xấu có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu (trừ khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu), hệ số rủi ro tín dụng là 150%;
+b) Đối với khoản nợ xấu có dự phòng cụ thể từ 20% đến 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu, hệ số rủi ro tín dụng là 100%;
+c) Đối với khoản nợ xấu có dự phòng cụ thể lớn hơn 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà và có dự phòng cụ thể từ 20% giá trị của khoản nợ xấu trở lên, hệ số rủi ro tín dụng là 50%.
+14. Đối với tài sản là các khoản phải thu phát sinh từ việc bán nợ xấu (không bao gồm các khoản phải thu phát sinh trong quá trình bán nợ xấu cho Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam và Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam), hệ số rủi ro tín dụng là 200%.
+15. Đối với tài sản là công cụ vốn chủ sở hữu, mua cổ phiếu của doanh nghiệp (trừ các khoản đầu tư đã trừ khỏi vốn tự có quy định tại Phụ lục 1 kèm theo Thông tư này) và các khoản cho vay để đầu tư, kinh doanh chứng khoán, khoản cho vay giao dịch ký quỹ của công ty chứng khoán, hệ số rủi ro tín dụng là 150%.
+16. Đối với tài sản là các khoản cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp thuê tài chính theo quy định tại điểm b khoản 9 Điều này.
+17. Đối với tài sản là các khoản mua lại khoản phải thu có bảo lưu quyền truy đòi của công ty tài chính, công ty cho thuê tài chính theo quy định, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi đối với bên bán khoản phải thu.
+Đối với các khoản mua lại khoản phải thu của công ty tài chính, công ty cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi.
+18. Đối với các tài sản khác trên bảng cân đối kế toán trừ các tài sản quy định tại khoản 1, khoản 2, khoản 3, khoản 4, khoản 5, khoản 6, khoản 7, khoản 8, khoản 9, khoản 10, khoản 11, khoản 12, khoản 13, khoản 14, khoản 15, khoản 16 và khoản 17 Điều này, hệ số rủi ro tín dụng là 100%.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,4a165b04-a045-4536-bc0d-c9d537a0f71c
+CONFLICT_TD_02,Tín dụng,agr_td03,[315/QC-NHNO-TD - Quy chế tín dụng nội bộ số 315/QC-NHNO-TD | Điều 22 | doc_agr_td03_02],"Tất cả các khoản vay ngắn hạn phục vụ sản xuất nông nghiệp không có tài sản bảo đảm theo Nghị định 55/2015/NĐ-CP được Agribank giải ngân lên tới 100 triệu đồng đối với cá nhân, hộ gia đình nông dân trên cơ sở xác nhận của Ủy ban nhân dân xã.",117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương II | Mục 2 | Điều 9. Hệ số rủi ro tín dụng (CRW) | doc_117310_điều_9__hệ_số_rủi_ro_tín_dụng__crw_9]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+Điều 9. Hệ số rủi ro tín dụng (CRW)
+1. Ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện phân loại tài sản theo quy định tại Điều này và hướng dẫn tại Phụ lục 6 để áp dụng hệ số rủi ro tín dụng.
+Khi tính tỷ lệ an toàn vốn hợp nhất, ngân hàng được áp dụng hệ số rủi ro theo quy định tại nước sở tại đối với các khoản phải đòi của công ty con, công ty liên kết, chi nhánh của ngân hàng tại nước ngoài.
+2. Đối với tài sản là tiền mặt, vàng và các khoản tương đương tiền mặt của ngân hàng, chi nhánh ngân hàng nước ngoài, hệ số rủi ro tín dụng là 0%.
+3. Đối với tài sản là khoản phải đòi Chính phủ Việt Nam, Ngân hàng Nhà nước, Kho bạc Nhà nước, Ủy ban nhân dân tỉnh, thành phố trực thuộc Trung ương, các ngân hàng chính sách, hệ số rủi ro tín dụng là 0%. Đối với khoản phải đòi Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam (VAMC), Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam (DATC), hệ số rủi ro là 20%.
+4. Đối với tài sản là khoản phải đòi tổ chức tài chính quốc tế, hệ số rủi ro tín dụng là 0%.
+5. Đối với tài sản là khoản phải đòi chính phủ, ngân hàng Trung ương các nước, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến A-
+Từ BBB+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+0%
+20%
+50%
+100%
+150%
+6. Đối với tài sản là khoản phải đòi các tổ chức công lập của chính phủ (non-central government public sector entities (PSEs), chính quyền địa phương các nước, hệ số rủi ro tín dụng áp dụng theo hệ số rủi ro đối với khoản phải đòi chính phủ đó theo quy định tại khoản 5 Điều này.
+7. Đối với tài sản là khoản phải đòi tổ chức tài chính (bao gồm cả tổ chức tín dụng), hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với tổ chức tài chính nước ngoài (bao gồm cả tổ chức tín dụng nước ngoài) không phải là tổ chức tài chính quốc tế quy định tại khoản 20 Điều 2 Thông tư này, hệ số rủi ro tín dụng áp dụng theo thứ hạng tín nhiệm như sau:
+Thứ hạng tín nhiệm
+Từ AAA đến AA-
+Từ A+ đến BBB-
+Từ BB+ đến B-
+Dưới B- hoặc không có xếp hạng
+Hệ số rủi ro tín dụng
+20%
+50%
+100%
+150%
+b) Đối với chi nhánh ngân hàng nước ngoài hoạt động tại Việt Nam áp dụng hệ số rủi ro tín dụng theo thứ hạng tín nhiệm của tổ chức tín dụng nước ngoài là ngân hàng mẹ.
+c) Đối với tài sản là các khoản phải đòi tổ chức tín dụng trong nước, trừ các khoản phải đòi dưới hình thức giao dịch reverse repo đã được tính rủi ro tín dụng đối tác theo quy định tại khoản 4 Điều 8 Thông tư này, hệ số rủi ro tín dụng áp dụng như sau:
+Thứ hạng tín nhiệm
+AAA đến AA-
+A+ đến BBB-
+BB+ đến BB-
+B+ đến B-
+Dưới B- và Không có xếp hạng
+Khoản phải đòi có thời hạn ban đầu từ 3 tháng trở lên
+20%
+50%
+80%
+100%
+150%
+Khoản phải đòi có thời hạn ban đầu dưới 3 tháng
+10%
+20%
+40%
+50%
+70%
+8. Đối với tài sản là các khoản mua, đầu tư nợ thứ cấp, chứng khoán nợ khác của ngân hàng, chi nhánh ngân hàng nước ngoài khác phát hành không bị trừ khỏi Vốn cấp 2 quy định tại mục 19 Phần I, điểm A, mục 21 Phần II điểm A, mục 13 điểm B Phụ lục 1 Thông tư này, hệ số rủi ro tín dụng áp dụng theo quy định tại điểm b và điểm c khoản 7 Điều này.
+9. Đối với tài sản là khoản phải đòi doanh nghiệp không phải là tổ chức tín dụng, chi nhánh ngân hàng nước ngoài, trừ các khoản phải đòi quy định tại khoản 10 Điều này, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với doanh nghiệp vừa và nhỏ được xác định theo quy định của pháp luật về trợ giúp phát triển doanh nghiệp vừa và nhỏ, hệ số rủi ro là 90%;
+b) Đối với các doanh nghiệp khác, ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu được xác định trên cơ sở số liệu Báo cáo tài chính năm (Báo cáo tài chính hợp nhất) được kiểm toán tại thời điểm gần nhất đối với các doanh nghiệp phải kiểm toán độc lập; Báo cáo tài chính năm (được kiểm toán, nếu có) nộp cho cơ quan thuế (có bằng chứng đã nộp cho cơ quan thuế) tại thời điểm gần nhất đối với doanh nghiệp không phải kiểm toán độc lập theo quy định của pháp luật như sau:
+- Doanh thu lấy số liệu trên Báo cáo kết quả hoạt động kinh doanh;
+- Tỷ lệ đòn bẩy = Tổng Nợ vay/Tổng tài sản; Trong đó:
+Tổng Nợ vay (total debt) được xác định bằng tổng của các khoản mục vay và nợ thuê tài chính ngắn hạn với khoản mục vay và nợ thuê tài chính dài hạn theo quy định hiện hành về kế toán.
+- Vốn chủ sở hữu lấy số liệu trên Bảng cân đối kế toán.
+(i) Hệ số rủi ro tín dụng áp dụng theo chỉ tiêu doanh thu, tỷ lệ đòn bẩy, vốn chủ sở hữu của doanh nghiệp như sau:
+Doanh thu dưới 100 tỷ đồng
+Doanh thu từ 100 tỷ đồng đến dưới 400 tỷ đồng
+Doanh thu từ 400 tỷ đồng đến 1500 tỷ đồng
+Doanh thu trên 1500 tỷ đồng
+Tỷ lệ đòn bẩy dưới 25%
+100%
+80%
+60%
+50%
+Tỷ lệ đòn bẩy từ 25% đến 50%
+125%
+110%
+95%
+80%
+Tỷ lệ đòn bẩy trên 50%
+160%
+150%
+140%
+120%
+Vốn chủ sở hữu âm hoặc bằng 0
+250%
+(ii) Hệ số rủi ro tín dụng 200% được áp dụng đối với các doanh nghiệp không cung cấp Báo cáo tài chính cho ngân hàng, chi nhánh ngân hàng nước ngoài để tính các chỉ tiêu doanh thu, tỷ lệ đòn bảy, vốn chủ sở hữu; (iii) Đối với các doanh nghiệp thành lập mới (không bao gồm các trường hợp thành lập do tổ chức lại, chuyển đổi hình thức pháp lý,...), hoạt động chưa được 01 năm, hệ số rủi ro tín dụng là 150%.
+c) Đối với khoản cấp tín dụng chuyên biệt là khoản cấp tín dụng tài trợ dự án, tài trợ máy móc thiết bị và tài trợ hàng hóa, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp theo quy định tại điểm b khoản 9 Điều này.
+10. Đối với tài sản là khoản cho vay bảo đảm bằng bất động sản, hệ số rủi ro tín dụng áp dụng như sau:
+a) Ngân hàng, chi nhánh ngân hàng nước ngoài phải xác định Tỷ lệ bảo đảm (viết tắt là LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản như sau:
+(i) Tỷ lệ bảo đảm (LTV) = Tổng số dư khoản phải đòi/Giá trị của tài sản bảo đảm. Trong đó:
+- Tổng số dư khoản phải đòi bao gồm tổng số dư (đã giải ngân và số dư chưa giải ngân) của khoản phải đòi và số dư (đã giải ngân và số dư chưa giải ngân) của các khoản phải đòi khác được bảo đảm bằng bất động sản đó tại ngân hàng, chi nhánh ngân hàng nước ngoài;
+- Giá trị của tài sản bảo đảm là giá trị của bất động sản bảo đảm cho các khoản phải đòi đó được xác định tại thời điểm xét duyệt cho vay.
+(ii) Tỷ lệ bảo đảm (LTV) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin giá trị của tài sản bảo đảm bị suy giảm trên 30% so với giá trị tại thời điểm xác định gần nhất.
+b) Hệ số rủi ro tín dụng áp dụng đối với khoản phải đòi được bảo đảm bằng bất động sản không kinh doanh theo chỉ tiêu Tỷ lệ bảo đảm (LTV) như sau:
+LTV
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến dưới 100%
+LTV từ 100% trở lên
+Hệ số rủi ro
+30%
+40%
+50%
+70%
+80%
+100%
+c) Đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh, hệ số rủi ro tín dụng áp dụng theo chỉ tiêu Tỷ lệ bảo đảm (LTV) đối với khoản phải đòi được đảm bảo bằng bất động sản kinh doanh như sau:
+LTV dưới 60%
+LTV từ 60% trở lên đến dưới 75%
+LTV từ 75% trở lên
+Khoản phải đòi được đảm bảo bằng bất động sản kinh doanh
+75%
+100%
+120%
+d) Đối với khoản phải đòi được đảm bảo bằng bất động sản là hỗn hợp bất động sản kinh doanh và bất động sản không kinh doanh, hệ số rủi ro tín dụng được xác định riêng cho từng bất động sản kinh doanh và bất động sản không kinh doanh tương ứng theo tỷ lệ tổng diện tích mặt bằng của bất động sản;
+đ) Hệ số rủi ro tín dụng 150% được áp dụng đối với khoản phải đòi được đảm bảo bằng bất động sản mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV);
+e) Hệ số rủi ro tín dụng 200% được áp dụng đối với tài sản là khoản cấp tín dụng tài trợ dự án kinh doanh bất động sản.
+11. Đối với tài sản là khoản cho vay thế chấp nhà, ngân hàng, chi nhánh ngân hàng nước ngoài thực hiện như sau:
+a) Xác định Tỷ lệ bảo đảm (LTV) theo quy định tại khoản 10 Điều này và Tỷ lệ thu nhập (viết tắt là DSC) đối với khoản cho vay thế chấp nhà như sau:
+(i) Tỷ lệ thu nhập (DSC) = Tổng số dư phải hoàn trả trong năm/Tổng thu nhập trong năm của khách hàng.
+Trong đó:
+- Tổng số dư phải hoàn trả trong năm bao gồm số dư nợ gốc và số dư nợ lãi;
+- Tổng thu nhập trong năm của khách hàng là thu nhập trong năm tính DSC của khách hàng sau khi đã trừ thuế thu nhập theo quy định và không bao gồm thu nhập từ việc cho thuê nhà hình thành từ khoản cho vay đó. Trường hợp, khách hàng cá nhân là đại diện ủy quyền cho hộ gia đình tham gia quan hệ vay vốn thì tổng thu nhập trong năm của khách hàng được xác định theo tổng thu nhập của các thành viên đồng trả nợ của hộ gia đình.
+(ii) Tỷ lệ thu nhập (DSC) phải được xác định lại khi ngân hàng, chi nhánh ngân hàng nước ngoài có thông tin thay đổi về tổng thu nhập của khách hàng.
+b) Hệ số rủi ro áp dụng cho khoản cho vay thế chấp nhà ở theo Tỷ lệ bảo đảm (LTV) và Tỷ lệ thu nhập (DSC) như sau:
+Các khoản cho vay thế chấp nhà ở
+LTV dưới 40%
+LTV từ 40% trở lên đến dưới 60%
+LTV từ 60% trở lên đến dưới 80%
+LTV từ 80% trở lên đến dưới 90%
+LTV từ 90% trở lên đến LTV từ 100% trở lên
+dưới 100%
+DSC từ 35% trở xuống
+25%
+30%
+40%
+50%
+60%
+80%
+DSC trên 35%
+30%
+40%
+50%
+70%
+80%
+100%
+c) Hệ số rủi ro tín dụng 200% được áp dụng đối với khoản cho vay thế chấp nhà mà ngân hàng, chi nhánh ngân hàng nước ngoài không có thông tin về Tỷ lệ bảo đảm (LTV) và/hoặc Tỷ lệ thu nhập (DSC).
+12. Đối với tài sản là danh mục cấp tín dụng bán lẻ, hệ số rủi ro tín dụng là 75%.
+13. Đối với khoản nợ xấu, hệ số rủi ro tín dụng áp dụng như sau:
+a) Đối với khoản nợ xấu có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu (trừ khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu), hệ số rủi ro tín dụng là 150%;
+b) Đối với khoản nợ xấu có dự phòng cụ thể từ 20% đến 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà có dự phòng cụ thể nhỏ hơn 20% giá trị của khoản nợ xấu, hệ số rủi ro tín dụng là 100%;
+c) Đối với khoản nợ xấu có dự phòng cụ thể lớn hơn 50% giá trị của khoản nợ xấu, khoản nợ xấu là khoản cho vay thế chấp nhà và có dự phòng cụ thể từ 20% giá trị của khoản nợ xấu trở lên, hệ số rủi ro tín dụng là 50%.
+14. Đối với tài sản là các khoản phải thu phát sinh từ việc bán nợ xấu (không bao gồm các khoản phải thu phát sinh trong quá trình bán nợ xấu cho Công ty Quản lý tài sản của các tổ chức tín dụng Việt Nam và Công ty trách nhiệm hữu hạn Mua bán nợ Việt Nam), hệ số rủi ro tín dụng là 200%.
+15. Đối với tài sản là công cụ vốn chủ sở hữu, mua cổ phiếu của doanh nghiệp (trừ các khoản đầu tư đã trừ khỏi vốn tự có quy định tại Phụ lục 1 kèm theo Thông tư này) và các khoản cho vay để đầu tư, kinh doanh chứng khoán, khoản cho vay giao dịch ký quỹ của công ty chứng khoán, hệ số rủi ro tín dụng là 150%.
+16. Đối với tài sản là các khoản cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số cao hơn giữa hệ số rủi ro tín dụng 160% và hệ số rủi ro tín dụng đối với doanh nghiệp thuê tài chính theo quy định tại điểm b khoản 9 Điều này.
+17. Đối với tài sản là các khoản mua lại khoản phải thu có bảo lưu quyền truy đòi của công ty tài chính, công ty cho thuê tài chính theo quy định, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi đối với bên bán khoản phải thu.
+Đối với các khoản mua lại khoản phải thu của công ty tài chính, công ty cho thuê tài chính, hệ số rủi ro tín dụng áp dụng hệ số rủi ro của khoản phải đòi.
+18. Đối với các tài sản khác trên bảng cân đối kế toán trừ các tài sản quy định tại khoản 1, khoản 2, khoản 3, khoản 4, khoản 5, khoản 6, khoản 7, khoản 8, khoản 9, khoản 10, khoản 11, khoản 12, khoản 13, khoản 14, khoản 15, khoản 16 và khoản 17 Điều này, hệ số rủi ro tín dụng là 100%.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,99faf2d0-d5ae-4a0d-8249-ca25166e880e
+CONFLICT_TD_03,Tín dụng,agr_td03,[315/QC-NHNO-TD - Quy chế tín dụng nội bộ số 315/QC-NHNO-TD | Điều 35 | doc_agr_td03_03],Cán bộ tín dụng Agribank thực hiện kiểm tra sử dụng vốn vay định kỳ 30 ngày sau khi giải ngân đối với khoản vay sản xuất kinh doanh và 60 ngày đối với khoản vay tiêu dùng. Nếu phát hiện sai mục đích phải thu hồi nợ trước hạn.,117310,"[Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài | Chương I | nan | Điều 2. Giải thích từ ngữ | doc_117310_điều_2__giải_thích_từ_ngữ_2]","Văn bản: Thông tư số 41/2016/TT-NHNN Quy định tỷ lệ an toàn vốn đối với ngân hàng, chi nhánh ngân hàng nước ngoài (Số ký hiệu: 41/2016/TT-NHNN)
+Điều 2. Giải thích từ ngữ
+Điều 2. Giải thích từ ngữ
+Trong Thông tư này, các từ ngữ dưới đây được hiểu như sau:
+1. Tài sản tài chính là các loại tài sản sau:
+a) Tiền mặt;
+b) Công cụ vốn chủ sở hữu của đơn vị khác;
+c) Quyền theo hợp đồng để:
+(i) Nhận tiền mặt hoặc tài sản tài chính khác từ đơn vị khác; hoặc
+(ii) Trao đổi các tài sản tài chính hoặc nợ phải trả tài chính với đơn vị khác theo các điều kiện có thể có lợi cho ngân hàng, chi nhánh ngân hàng nước ngoài;
+d) Hợp đồng sẽ hoặc có thể được thanh toán bằng các công cụ vốn chủ sở hữu của ngân hàng.
+2. Nợ phải trả tài chính là các nghĩa vụ sau:
+a) Mang tính bắt buộc để:
+(i) Thanh toán tiền mặt hoặc tài sản tài chính cho đơn vị khác;
+(ii) Trao đổi các tài sản tài chính hoặc nợ phải trả tài chính với đơn vị khác theo các điều kiện không có lợi cho ngân hàng, chi nhánh ngân hàng nước ngoài; hoặc
+b) Hợp đồng sẽ hoặc có thể được thanh toán bằng các công cụ vốn chủ sở hữu của ngân hàng.
+3. Công cụ tài chính là hợp đồng làm tăng tài sản tài chính của một bên và nợ phải trả tài chính hoặc công cụ vốn chủ sở hữu của bên khác.
+4. Công cụ vốn chủ sở hữu là hợp đồng chứng tỏ được những lợi ích còn lại về tài sản của đơn vị sau khi trừ đi toàn bộ nghĩa vụ của đơn vị đó. Công cụ vốn chủ sở hữu có tính chất nợ do ngân hàng phát hành gồm cổ phiếu ưu đãi cổ tức và các công cụ vốn chủ sở hữu khác đáp ứng các điều kiện sau:
+a) Được mua lại theo quy định của pháp luật và đảm bảo sau khi thực hiện vẫn tuân thủ các giới hạn, tỷ lệ an toàn theo quy định;
+b) Có thể dùng để bù đắp khoản lỗ mà ngân hàng không phải ngừng các giao dịch tự doanh;
+c) Không phải trả cổ tức ưu đãi và chuyển cổ tức ưu đãi sang năm tiếp theo trong trường hợp việc trả cổ tức ưu đãi dẫn đến kết quả kinh doanh của ngân hàng bị lỗ.
+5. Nợ thứ cấp (subordinated debt) là khoản nợ mà chủ nợ đồng ý thỏa thuận thanh toán sau các nghĩa vụ, chủ nợ có bảo đảm và không bảo đảm khác khi đơn vị vay nợ bị phá sản, giải thể.
+6. Khách hàng là cá nhân, pháp nhân (bao gồm cả tổ chức tín dụng, chi nhánh ngân hàng nước ngoài) có quan hệ tín dụng, gửi tiền với ngân hàng, chi nhánh ngân hàng nước ngoài, trừ các đối tác quy định tại khoản 7 Điều này.
+7. Đối tác là cá nhân, pháp nhân (bao gồm cả tổ chức tín dụng, chi nhánh ngân hàng nước ngoài) có giao dịch quy định tại khoản 4 Điều 8 Thông tư này với ngân hàng, chi nhánh ngân hàng nước ngoài.
+8. Khoản phải đòi của ngân hàng, chi nhánh ngân hàng nước ngoài bao gồm:
+a) Các khoản cấp tín dụng, bao gồm cả khoản ủy thác cấp tín dụng và khoản mua có bảo lưu quyền truy đòi công cụ chuyển nhượng, giấy tờ có giá khác, trừ các khoản mua có kỳ hạn công cụ chuyển nhượng, giấy tờ có giá khác;
+b) Giấy tờ có giá do đơn vị khác phát hành;
+c) Quyền theo hợp đồng để nhận tiền mặt hoặc tài sản tài chính khác từ đơn vị khác theo quy định của pháp luật, trừ các khoản quy định tại điểm a và b khoản này;
+9. Danh mục cấp tín dụng bán lẻ là danh mục các khoản cấp tín dụng cho khách hàng là cá nhân (không bao gồm các khoản cho vay bảo đảm bằng bất động sản quy định tại khoản 10 Điều này, khoản cho vay thế chấp nhà quy định tại khoản 11 Điều này, các khoản cho vay để kinh doanh chứng khoán) mà số dư cấp tín dụng (đã giải ngân và chưa giải ngân) của một khách hàng đảm bảo đồng thời:
+a) Không vượt quá 8 tỷ đồng Việt Nam;
+b) Không vượt quá 0,2% tổng số dư của toàn bộ danh mục cấp tín dụng bán lẻ (đã giải ngân và chưa giải ngân) của ngân hàng, chi nhánh ngân hàng nước ngoài.
+10. Khoản cho vay bảo đảm bằng bất động sản là khoản cho vay đối với cá nhân, pháp nhân để mua bất động sản, thực hiện dự án bất động sản và được bảo đảm bằng chính bất động sản, dự án bất động sản hình thành từ khoản cho vay theo các quy định của pháp luật về giao dịch đảm bảo.
+11. Khoản cho vay thế chấp nhà là khoản cho vay bảo đảm bằng bất động sản đối với cá nhân để mua nhà đáp ứng đầy đủ các điều kiện sau:
+a) Nguồn tiền trả nợ không phải là nguồn tiền cho thuê nhà hình thành từ khoản cho vay;
+b) Nhà đã hoàn thành theo hợp đồng mua bán nhà;
+c) Ngân hàng, chi nhánh ngân hàng nước ngoài có đầy đủ quyền hợp pháp để xử lý nhà thế chấp khi khách hàng không trả được nợ theo quy định của pháp luật về giao dịch đảm bảo;
+d) Nhà hình thành từ khoản cho vay thế chấp này phải được định giá độc lập (được bên thứ ba định giá hoặc được bộ phận độc lập với bộ phận phê duyệt tín dụng của ngân hàng, chi nhánh ngân hàng nước ngoài định giá) với nguyên tắc thận trọng (giá trị không cao hơn giá thị trường tại thời điểm xét duyệt cho vay) theo quy định của ngân hàng, chi nhánh ngân hàng nước ngoài.
+12. Khoản cấp tín dụng chuyên biệt (Specialised lending) là các khoản cấp tín dụng để thực hiện dự án, đầu tư máy móc thiết bị hoặc mua hàng hóa, đáp ứng các tiêu chí sau:
+a) Khách hàng vay vốn là pháp nhân được thành lập chỉ để thực hiện dự án, khai thác máy móc thiết bị, kinh doanh hàng hóa được hình thành từ nguồn vốn cấp tín dụng, không có hoạt động kinh doanh khác;
+b) Được bảo đảm bằng dự án, máy móc thiết bị, hàng hóa được hình thành từ nguồn vốn cấp tín dụng và toàn bộ nguồn tiền trả nợ là nguồn tiền hình thành từ việc kinh doanh, khai thác dự án, máy móc, thiết bị và hàng hóa đó;
+c) Ngân hàng, chi nhánh ngân hàng nước ngoài có quyền theo hợp đồng cấp tín dụng để kiểm soát toàn bộ việc giải ngân theo tiến độ của dự án, đầu tư máy móc, thiết bị, mua hàng hóa và quản lý thu nhập, dòng tiền của việc kinh doanh, khai thác dự án, máy móc, thiết bị và hàng hóa đó để thu hồi nợ theo hợp đồng cấp tín dụng;
+d) Được thực hiện dưới các hình thức:
+(i) Cấp tín dụng tài trợ dự án (Project Finance) là khoản cấp tín dụng chuyên biệt để thực hiện dự án;
+(ii) Cấp tín dụng tài trợ dự án kinh doanh bất động sản (Income producing real estate) là các khoản cấp tín dụng chuyên biệt để thực hiện dự án kinh doanh bất động sản (văn phòng, trung tâm thương mại, khu đô thị, tòa nhà phức hợp, kho bãi, khách sạn, khu công nghiệp...);
+(iii) Cấp tín dụng tài trợ máy móc thiết bị (Object Finance) là các khoản cấp tín dụng chuyên biệt để đầu tư máy móc, thiết bị (tàu thủy, máy bay, vệ tinh, tàu hỏa...);
+(iv) Cấp tín dụng tài trợ hàng hóa (Commodities Finance) là các khoản cấp tín dụng chuyên biệt để mua hàng hóa (dầu thô, kim loại, ngũ cốc,...).
+13. Bất động sản kinh doanh là bất động sản được đầu tư, mua, nhận chuyển nhượng, thuê, thuê mua để bán, chuyển nhượng, cho thuê, cho thuê lại, cho thuê mua nhằm mục đích sinh lợi.
+14. Giao dịch Repo là giao dịch trong đó một bên bán và chuyển giao quyền sở hữu tài sản tài chính cho một bên khác, đồng thời cam kết sẽ mua lại và nhận lại quyền sở hữu tài sản tài chính đó sau một thời gian xác định với một mức giá xác định.
+15. Giao dịch Reverse Repo là giao dịch trong đó một bên mua và nhận chuyển giao quyền sở hữu tài sản tài chính từ một bên khác, đồng thời cam kết sẽ bán lại và chuyển giao quyền sở hữu tài sản tài chính đó sau một thời gian xác định với một mức giá xác định, bao gồm cả giao dịch mua có kỳ hạn tài sản tài chính theo quy định của Ngân hàng Nhà nước về hoạt động chiết khấu công cụ chuyển nhượng, giấy tờ có giá khác.
+16. Doanh nghiệp xếp hạng tín nhiệm độc lập bao gồm:
+a) Tổ chức xếp hạng tín nhiệm Moody's, Standard & Poor, Fitch Rating;
+b) Các doanh nghiệp xếp hạng tín nhiệm được thành lập theo quy định của pháp luật Việt Nam về dịch vụ xếp hạng tín nhiệm.
+17. Xếp hạng tín nhiệm tự nguyện là việc doanh nghiệp xếp hạng tín nhiệm độc lập tự nguyện thực hiện xếp hạng tín nhiệm, không có thỏa thuận với đối tượng được xếp hạng tín nhiệm.
+18. Xếp hạng tín nhiệm thỏa thuận là việc doanh nghiệp xếp hạng tín nhiệm độc lập thực hiện xếp hạng tín nhiệm theo thỏa thuận giữa doanh nghiệp xếp hạng tín nhiệm độc lập và đối tượng được xếp hạng tín nhiệm.
+19. OECD là tổ chức Hợp tác Kinh tế và Phát triển (Organization for Economic Cooperation and Development).
+20. Tổ chức tài chính quốc tế gồm:
+a) Nhóm ngân hàng thế giới gồm: Ngân hàng Tái thiết và Phát triển quốc tế (The International Bank for Reconstruction and Development - IBRD), Công ty tài chính quốc tế (The International Financial Company - IFC), Hiệp hội Phát triển quốc tế (The International Development Association-IDA), Cơ quan Bảo lãnh Đầu tư Đa phương (The Multilateral Investment Guarantee Agency-MIGA);
+b) Ngân hàng Phát triển Châu Á (The Asian Development Bank - ADB);
+c) Ngân hàng Phát triển Châu Phi (The Africa Development Bank - AfDB);
+d) Ngân hàng tái thiết và Phát triển Châu Âu (The European Bank for Reconstruction and Development - EBRD);
+đ) Ngân hàng Phát triển Liên Mỹ (The Inter-American Development Bank - IADB);
+e) Ngân hàng Đầu tư Châu Âu (The European Investment Bank - EIB);
+g) Quỹ Đầu tư Châu Âu (The European Investment Fund - EIF);
+h) Ngân hàng Đầu tư Bắc Âu (The Nordic Investment Bank - NIB);
+i) Ngân hàng Phát triển Caribbean (The Caribbean Development Bank - CDB);
+k) Ngân hàng Phát triển Hồi giáo (The Islamic Development Bank - IDB);
+l) Ngân hàng Phát triển cộng đồng Châu Âu (The Council of Europe Development Bank - CEDB);
+m) Tổ chức tài chính quốc tế khác có vốn điều lệ do chính phủ các nước đóng góp.
+21. Giảm thiểu rủi ro là việc ngân hàng, chi nhánh ngân hàng nước ngoài sử dụng các biện pháp làm giảm một phần hoặc toàn bộ tổn thất có thể xảy ra do các rủi ro trong hoạt động của ngân hàng, chi nhánh ngân hàng nước ngoài.
+22. Sản phẩm phái sinh bao gồm:
+a) Sản phẩm phái sinh theo quy định tại khoản 23 Điều 4 Luật các tổ chức tín dụng, gồm:
+(i) Sản phẩm phái sinh tín dụng gồm các hợp đồng bảo hiểm tín dụng, hợp đồng hoán đổi rủi ro tín dụng, hợp đồng đầu tư gắn với rủi ro tín dụng, hợp đồng phái sinh tín dụng khác theo quy định của pháp luật;
+(ii) Sản phẩm phái sinh lãi suất gồm hợp đồng lãi suất kỳ hạn, hợp đồng hoán đổi lãi suất một đồng tiền, hợp đồng hoán đổi lãi suất hai đồng tiền hoặc hợp đồng hoán đổi tiền tệ chéo, hợp đồng quyền chọn lãi suất, các hợp đồng phái sinh lãi suất khác theo quy định của pháp luật;
+(iii) Sản phẩm phái sinh ngoại tệ gồm các giao dịch mua, bán ngoại tệ kỳ hạn, giao dịch hoán đổi ngoại tệ, giao dịch quyền chọn mua, bán ngoại tệ, các giao dịch phái sinh ngoại tệ khác theo quy định của pháp luật;
+(iv) Sản phẩm phái sinh giá cả hàng hóa gồm các hợp đồng hoán đổi giá cả hàng hóa, hợp đồng tương lai giá cả hàng hóa, hợp đồng quyền chọn giá cả hàng hóa và các hợp đồng phái sinh giá cả hàng hóa khác theo quy định của pháp luật.
+b) Chứng khoán phái sinh gồm hợp đồng tương lai, hợp đồng quyền chọn, hợp đồng kỳ hạn và chứng khoán phái sinh khác theo quy định của pháp luật về chứng khoán phái sinh và thị trường chứng khoán phái sinh;
+c) Sản phẩm phái sinh khác theo quy định của pháp luật.
+23. Tài sản cơ sở là tài sản tài chính gốc được sử dụng làm cơ sở để xác định giá trị sản phẩm phái sinh.
+24. Rủi ro tín dụng bao gồm:
+a) Rủi ro tín dụng là rủi ro do khách hàng không thực hiện hoặc không có khả năng thực hiện một phần hoặc toàn bộ nghĩa vụ trả nợ theo hợp đồng hoặc thỏa thuận với ngân hàng, chi nhánh ngân hàng nước ngoài, trừ các trường hợp quy định tại điểm b khoản này;
+b) Rủi ro tín dụng đối tác là rủi ro do đối tác không thực hiện hoặc không có khả năng thực hiện một phần hoặc toàn bộ nghĩa vụ thanh toán trước hoặc khi đến hạn của các giao dịch quy định tại khoản 4 Điều 8 Thông tư này.
+25. Rủi ro thị trường là rủi ro do biến động bất lợi của lãi suất, tỷ giá, giá chứng khoán và giá hàng hoá trên thị trường. Rủi ro thị trường bao gồm:
+a) Rủi ro lãi suất là rủi ro do biến động bất lợi của lãi suất trên thị trường đối với giá trị của giấy tờ có giá, công cụ tài chính có lãi suất, sản phẩm phái sinh lãi suất trên sổ kinh doanh của ngân hàng, chi nhánh ngân hàng nước ngoài;
+b) Rủi ro ngoại hối là rủi ro do biến động bất lợi của tỷ giá trên thị trường khi ngân hàng, chi nhánh ngân hàng nước ngoài có trạng thái ngoại tệ;
+c) Rủi ro giá cổ phiếu là rủi ro do biến động bất lợi của giá cổ phiếu trên thị trường đối với giá trị của cổ phiếu, giá trị chứng khoán phái sinh trên sổ kinh doanh của ngân hàng, chi nhánh ngân hàng nước ngoài;
+d) Rủi ro giá hàng hóa là rủi ro do biến động bất lợi của giá hàng hoá trên thị trường đối với giá trị của sản phẩm phái sinh hàng hóa, giá trị của sản phẩm trong giao dịch giao ngay chịu rủi ro giá hàng hóa của ngân hàng, chi nhánh ngân hàng nước ngoài.
+26. Rủi ro lãi suất trên sổ ngân hàng là rủi ro do biến động bất lợi của lãi suất đối với thu nhập, giá trị tài sản, giá trị nợ phải trả và giá trị cam kết ngoại bảng của ngân hàng, chi nhánh ngân hàng nước ngoài phát sinh do:
+a) Chênh lệch thời điểm ấn định mức lãi suất mới hoặc kỳ xác định lại lãi suất;
+b) Thay đổi mối quan hệ giữa các mức lãi suất của các công cụ tài chính khác nhau nhưng có cùng thời điểm đáo hạn;
+c) Thay đổi mối quan hệ giữa các mức lãi suất ở các kỳ hạn khác nhau;
+d) Tác động từ các sản phẩm quyền chọn lãi suất, các sản phẩm có yếu tố quyền chọn lãi suất.
+27. Rủi ro hoạt động là rủi ro do các quy trình nội bộ quy định không đầy đủ hoặc có sai sót, do yếu tố con người, do các lỗi, sự cố của hệ thống hoặc do các yếu tố bên ngoài làm tổn thất về tài chính, tác động tiêu cực phi tài chính đối với ngân hàng, chi nhánh ngân hàng nước ngoài (bao gồm cả rủi ro pháp lý). Rủi ro hoạt động không bao gồm:
+a) Rủi ro danh tiếng;
+b) Rủi ro chiến lược.
+28. Rủi ro danh tiếng là rủi ro do khách hàng, đối tác, cổ đông, nhà đầu tư hoặc công chúng có phản ứng tiêu cực về uy tín của ngân hàng, chi nhánh ngân hàng nước ngoài.
+29. Rủi ro chiến lược là rủi ro do ngân hàng, chi nhánh ngân hàng nước ngoài có hoặc không có chiến lược, chính sách ứng phó kịp thời trước các thay đổi môi trường kinh doanh làm giảm khả năng đạt được chiến lược kinh doanh, mục tiêu lợi nhuận của ngân hàng, chi nhánh ngân hàng nước ngoài.
+30. Giá trị chịu rủi ro (Exposures) là phần giá trị của tài sản, nợ phải trả, các cam kết ngoại bảng của ngân hàng, chi nhánh ngân hàng nước ngoài chịu tổn thất tài chính, tác động tiêu cực phi tài chính của rủi ro tín dụng, rủi ro thị trường, rủi ro thanh khoản, rủi ro hoạt động và các rủi ro khác.
+31. Giao dịch tự doanh là giao dịch mua, bán, trao đổi do ngân hàng, chi nhánh ngân hàng nước ngoài, công ty con của ngân hàng thực hiện theo quy định của pháp luật với mục đích mua, bán, trao đổi trong thời hạn dưới một năm để thu lợi từ chênh lệch giá thị trường cho ngân hàng, chi nhánh ngân hàng nước ngoài đối với các công cụ tài chính, gồm:
+a) Các công cụ tài chính trên thị trường tiền tệ;
+b) Các loại tiền tệ (bao gồm cả vàng);
+c) Chứng khoán trên thị trường vốn;
+d) Các sản phẩm phái sinh;
+đ) Các công cụ tài chính khác được giao dịch trên thị trường chính thức.
+32. Sổ kinh doanh là danh mục ghi nhận các trạng thái của:
+a) Giao dịch tự doanh (trừ các giao dịch quy định tại điểm b khoản 33 Điều này);
+b) Giao dịch để thực hiện nghiệp vụ bảo lãnh phát hành công cụ tài chính;
+c) Giao dịch sản phẩm phái sinh để phòng ngừa rủi ro của các giao dịch tự doanh của ngân hàng, chi nhánh ngân hàng nước ngoài;
+d) Giao dịch mua bán ngoại tệ, tài sản tài chính để phục vụ nhu cầu của khách hàng, đối tác và các giao dịch để đối ứng với các giao dịch này.
+33. Sổ ngân hàng là danh mục ghi nhận trạng thái của:
+a) Giao dịch repo, reverse repo;
+b) Giao dịch sản phẩm phái sinh để phòng ngừa rủi ro cho các khoản mục của Bảng cân đối tài sản (bao gồm cả các khoản mục ngoại bảng) của ngân hàng, chi nhánh ngân hàng nước ngoài, trừ các giao dịch đã phân loại vào Sổ kinh doanh của ngân hàng, chi nhánh ngân hàng nước ngoài quy định tại điểm c, khoản 32 Điều này;
+c) Giao dịch mua bán tài sản tài chính với mục đích dự trữ khả năng thanh khoản;
+d) Các giao dịch còn lại không thuộc sổ kinh doanh của ngân hàng, chi nhánh ngân hàng nước ngoài.",Hạn mức/ngưỡng,"Quy định nội bộ Agribank (Điều 5) yêu cầu tỷ lệ an toàn vốn tối thiểu (CAR) đạt 8.5%, trong khi Thông tư 41/2016/TT-NHNN chỉ yêu cầu tối thiểu 8.0%. Đây là sự chồng chéo về hạn mức/ngưỡng với mức độ nghiêm trọng LOW vì quy định nội bộ nghiêm ngặt hơn quy định pháp lý chung.",LOW,NEEDS_HUMAN_REVIEW,9ab7e6f1-1f2a-4be4-9ccc-90233c2247fc
